@@ -1,38 +1,26 @@
 "use strict";
 
 
-//if (1 == 2) {
-//   console.log('Ok');
-//} else {
-//   console.log('error')
+let num = 50;
+
+//while (num <= 55) {
+//   console.log(num)
+//   num++;
 //}
 
-const num = 50;
+//сначала что то делает потом проаеряет условия
 
-//Тернарные операторы
-//(num === 50) ? console.log('Ok') : console.log('error');
+//do {
+//   console.log(num);
+//   num++;
+//}
+//while (num < 55);
 
-switch (num) {
-   case 49:
-      console.log('Неверно');
-      break;
-   case 100:
-      console.log('Неверно');
-      break;
-   case 51:
-      console.log('Правильно');
-      break;
-   default:
-      console.log('Не в этот раз');
-      break;
-}
 
-const hamburger = 3;
-const fries = 1;
-const cola = 0;
-
-if (hamburger === 3 && cola === 1 && fries) {
-   console.log('Все сыты');
-} else {
-   console.log('Мы уходим')
+for (let i = 1; i < 8; i++) {
+   if (i == 6) {
+      //break;
+      continue;
+   }
+   console.log(i);
 }
