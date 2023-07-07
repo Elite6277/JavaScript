@@ -1,44 +1,78 @@
 "use strict";
 
-//Условя  превращает любой тип данных в boolean
-if (1) {
-   console.log('Ok!');
+//Логические операторы conditions
+//В JavaScript динамическая типизация
+//В JavaScript типы данных могут переходить один в другой
+const hamburger = true;
+const fries = false;
+
+if (hamburger && fries) {
+   console.log('Я сыт!');
+}
+
+//Результат логических операций это какое то логическое bool значение
+console.log((hamburger && fries))
+
+// В JavaScript есть 5 сущностей которые будут всегда false
+// Это 0, пустая строка-->'', null, undefined, Nan
+
+// Всё остальное всегда будет true
+// 1 в логичкском контексте всегда true
+
+const hamburger = 3;
+const fries = 1;
+const cola = 1;
+
+console.log(hamburger === 3 && cola && fries);
+// Оператор и возвращает первое ложное значение и запинается,  а если true возвращается последнее правдивое значение
+console.log(1 && 0);
+console.log(1 && 5);
+console.log(null && 5);
+console.log(0 && 'ldas;ldkal;sdk');
+
+const hamburger = true;
+const fries = false;
+
+if (hamburger === 3 && cola === 1 && fries) {
+   console.log('Все сыты');
 } else {
-   console.log('Error');
+   console.log('Мы уходим');
 }
 
-const num = 50;
+// Если есть сомнения  в приорите выполнения  то взгляни в таблицу сравнения операторов
 
-if (num < 49) {
-   console.log('Error');
-} else if (num > 100) {
-   console.log('Слишком много');
+
+//Как только оператор или || видит правду он перестаёт работать
+// Код нижe выолнился до hamburger
+const hamburger = 3;
+const fries = 0;
+const cola = 0;
+if (hamburger || cola || fries) {
+   console.log('Все довольны');
 } else {
-   console.log('ok!');
+   console.log('Мы уходим');
+}
+// Если в или все неправда то возвращается последнее ложное значение
+//Код нижу верне первую правду
+let johnReport, alexReport, samReport, mariaReport = 'end';
+
+console.log(johnReport || alexReport || samReport || mariaReport)
+
+// Комбинация условий
+const hamburger = 3;
+const fries = 3;
+const cola = 0;
+const nuggets = 2;
+
+if (hamburger === 3 && cola === 2 || fries === 3 && nuggets) {
+   console.log('Все довольны');
+} else {
+   console.log('Мы уходим');
 }
 
-//Тернарные операторы 
-//Он называется тернарным потому что в его работе участвуют три аргумета
-//Это единственынный тернарный аргумент который используется в JavaScript 
-(num === 50) ? console.group('Ok!') : console.log('Error')
+console.log(hamburger === 3 && cola === 2 || fries === 3 && nuggets)
 
-//Сущесвует еще Бинарный аргумент 4+4  <--  и Унарный аргумент +4  <--
+//Оператор не !
 
-//Чтобы избежать больших отвевлений используется оператор switch
-//Конструкция switch всегда идет на строгое сравнение
-const number = '50';
-
-switch (number) {
-   case '49':
-      console.log('Неверно');
-      break;// Если код правильный то прерывает на это  месте
-   case '100':
-      console.log('Неверно');
-      break;
-   case '50':
-      console.log('В точку!');
-      break;
-   default: //значение по умоолчанию
-      console.log('Не в этот раз');
-      break;
-}
+// Сначала он превращает аргумент к которому применен превращает его в логический тип данных
+console.log(!0);
