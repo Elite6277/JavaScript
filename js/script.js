@@ -1,57 +1,42 @@
 "use strict";
-
-//Циклы Loops
-//Циклы используются для повторения однотипных дейсвий
-
-let num = 50;
-
-//Цикл while самый простой цикл
-while (num < 55) {
-   console.log(num);
-   num++;
-}
-
-// C помошью do мы можем снала что то сделать потом проверить условие условие;
-//Повторение в программировани называется итерация
-
-do {
-   console.log(num);
-   num++
-}
-while (num < 55);
-
-//for самый часто использующийся цикл потому что его можно подробно настроить
-// i сокращенно итератор
-// 1 с чего начинать; 2 условие при котором на цикл остановит свою работу;3 шаг цикла;
-
-let number = 55;
-for (let i = 1; i < 8; i++) {
-   console.log(number)
-   number++
-}
-
-//Пример бесконечный цикл
-let number = 55;
-for (let i = 1; i < 0; i++) {
-   console.log(number)
-   number++
-}
-let number = 55;
-
-//Чтобы закончить цикл на определенном этапе  используется break и дальше он не продолжается
-for (let i = 1; i < 10; i++) {
-   if (i == 7) {
-      break;
+// Вложенные циклы
+for (let i = 0; i < 3; i++) {
+   console.log(i);
+   for (let j = 0; j < 3; j++) {
+      console.log(j);
    }
-   console.log(i)
 }
-//Оператор continue  позволяет нам пропустить шаг который нам не нужен но при это не прерывает наш цикл
-for (let i = 1; i < 10; i++) {
-   if (i == 7) {
-      continue;
+
+
+//Создаем звездочки
+// *
+// ** 
+// ***
+// ****
+// *****
+
+let result = '';
+const length = 7;
+
+for (let i = 1; i < length; i++) {
+   for (let j = 0; j < i; j++) {
+      result += '*'
    }
-   console.log(i)
+   result += '\n'
 }
 
+console.log(result);
 
-//не путать с методами перебора for each for map и тд
+
+//Метки в цикле
+first: for (let i = 0; i < 3; i++) {
+   console.log(`First level: ${i}`);
+   for (let j = 0; j < 3; j++) {
+      console.log(`Second level: ${j}`);
+      for (let k = 0; k < 3; k++) {
+         if (k === 2) continue first;
+         console.log(`Third level: ${k}`);
+      }
+   }
+}
+
