@@ -14,6 +14,7 @@ P.S. Функции вызывать не обязательно*/
 
 // Код возьмите из предыдущего домашнего задания
 
+
 let numberOfFilms;
 
 function start() {
@@ -38,7 +39,8 @@ const personalMovieDB = {
 
 function rememberMyFilms() {
    for (let i = 0; i < 2; i++) {
-      const lastSeenFilm = prompt('Один из последних просмотренных фильмов?');
+      //Один из полезных методов у строк  метод trim() который удаяляет пробелы с начала и конца строки
+      const lastSeenFilm = prompt('Один из последних просмотренных фильмов?', '').trim();
       const filmsRaiting = prompt('На сколько оцените его?');
       if (lastSeenFilm != null && filmsRaiting != null && lastSeenFilm != '' && filmsRaiting != '' && lastSeenFilm.length < 50 && filmsRaiting.length <= 3) {
          personalMovieDB.movies[lastSeenFilm] = filmsRaiting;
@@ -49,7 +51,7 @@ function rememberMyFilms() {
       }
    }
 }
-//rememberMyFilms();
+rememberMyFilms();
 
 
 function detectPersonalLevel() {
@@ -64,7 +66,7 @@ function detectPersonalLevel() {
    }
 }
 
-//detectPersonalLevel();
+detectPersonalLevel();
 
 function showMyDB(hidden) {
    if (!hidden) {
