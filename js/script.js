@@ -1,120 +1,46 @@
 "use strict";
 
-// Передача по ссылке или по значению, Spread оператор(ES6)(ES9)
-// Если мы работаем с примитивными типами даннх можем заменять 
-// Если мы работаем с объектами к ним относятся массивы функции здесь идет передача не по значению а по ссылке 
-let a = 5,
-   b = a;
+//Основы ООП, прототипно ориентированное насоедование
 
-b = b + 5
+//Истинно функциональный подход, объектно ориентированный подход, процедурный и так далее
+//JavaScript является объектно ориентированным языком и главную роль в нем играет объект
+//Он может содержать в себе методы свойства любой тип данных и представлять с собой целостную сущность
 
-console.log(b);
-console.log(a);
+let str = "some";
+let strObj = new String(str);
 
-const obj = {
-   a: 5,
-   b: 1
-}
+console.log(typeof (str));
+console.log(typeof (strObj));//Так происходит когда мы javaScripte  пытаемся использлвать какой то метод на строке он оборачивает при выозове метода и возвращает после дейсвий
 
-//const copy = obj;// Ссылку
+console.dir([1, 2, 3]);
 
-//copy.a = 10;
-
-//console.log(copy);
-//console.log(obj);
-
-function copy(mainObj) {
-   let objCopy = {};
-
-   let key;//Переменную key можно создавать и вне переберающей конструкции
-
-   for (key in mainObj) {
-      objCopy[key] = mainObj[key];
-   }
-   return objCopy;
-}
-
-const numbers = {
-   a: 2,
-   b: 5,
-   c: {
-      x: 7,
-      y: 4
+const soldier = {
+   health: 400,
+   armor: 100,
+   sayHello: function () {
+      console.log('Hello');
    }
 };
-
-const newNumbers = copy(numbers); // Поверхностная копия
-// Когда мы клонируем объекты есть два понятия это глубокие и поверхностные копии оъектов
-
-
-newNumbers.a = 10;
-
-console.log(newNumbers);
-console.log(numbers);
+//Мы создаем новый объект john который будет прототипно наследоваться от солдата для того чтобы john  имел доступ к каким то функциям к каким то методам к каким то свойствам
+const john = Object.create(soldier)
+//Новосозданный рядовой john который нечего не содержит но уже может много чего
+john.sayHello();
 
 
-//Мы работаем с поверхностными копиями
+//const john = {
+//   health: 100
+//};
 
-// Метод Object.assign
+//Старый спопосб прототипирования которая может встретится н сейчас не стоит ипользовать
+//john.__proto__ = soldier;
 
-const add = {
-   d: 17,
-   e: 20
-};
-
-const clone = Object.assign({}, add); //Клонируем объект
-clone.d = 20;
-console.log(clone);
-
-console.log(Object.assign(numbers, add))//мы создали независмую поверхностную копию объекта
-
-
-//Массивы как создать копию массива
-
-const oldArray = ['a', 'b', 'c'];
-const newArray = oldArray.slice();// Это метод который помогает просто скоировать старый массив не меняя oldArray
-
-
-newArray[1] = 'aSAsS';
-console.log(newArray);//Измененная копия oldArray
-console.log(oldArray); // old array остался таким каким был
-
-
-//4 способ создания поверхностной копии это использования оператор разворота  spread operator
-
-const video = ['youtube', 'vimeo', 'rutube'],
-   blogs = ['worpress', 'livejournal', 'blogger'],
-   internet = [...video, ...blogs, 'vk', 'facebook']; //...<-- spread помогает развернуть массив  
-
-console.log(internet);
-
-function log(a, b, c) {
-   console.log(a);
-   console.log(b);
-   console.log(c);
-}
-
-const num = [2, 5, 7];
-
-log(...num);
-
-const array = ['a', 'b',];
-
-const newAaray = [...array]; //поверхностная копия верхнего массива
-
-newAaray[0] = 'no a';
-newAaray.push('c')
-console.log(newAaray);
-
-console.log(array);
-
-const q = {
-   one: 1,
-   two: 2
-};
-q['three'] = 3;
-const newObj = { ...q };
+//Object.setPrototypeOf(john, soldier);//Эта запись идентична верхней записи
 
 
 
-console.log(newObj)
+//console.log(john.armor);
+//john.sayHello();
+
+// ООП это наука о том как делать правильную архитектуру
+//Так же JavaScript можно назвать прототипно ориентированным языком это частный случай ООП один из его стилей
+//В JavaScripte все строится на прототипах
