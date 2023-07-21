@@ -1,158 +1,135 @@
+
+//1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" - 
+//новый фильм добавляется в список. Страница не должна перезагружаться.
+//Новый фильм должен добавляться в movieDB.movies.
+//Для получения доступа к значению input - обращаемся к нему как input.value;
+//P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
+
+//2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
+
+//3) При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
+
+//4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
+//"Добавляем любимый фильм"
+
+//5) Фильмы должны быть отсортированы по алфавиту */
+
 'use strict';
+//Чтобы четко сказать коду чтобы он ждал загрузки Дом дерева 
+document.addEventListener('DOMContentLoaded', () => {
+   //иногда вместо document можно встретить window но разницы никакой не будет
+   //код который расположен нижк сработает только тогда когда DOM структура будет загружена
+   const movieDB = {
+      movies: [
+         "Логан",
+         "Лига справедливости",
+         "Ла-ла лэнд",
+         "Одержимость",
+         "Скотт Пилигрим против..."
+      ]
+   };
 
-// Рекурсия прием который используется в программировании в целом
-// Внутри функции могут вызываться другие функции
-// Если ту же функцию вызывать внутри себя же это назывется рекурсией
+   const adv = document.querySelectorAll('.promo__adv img'),
+      poster = document.querySelector('.promo__bg'),
+      genre = poster.querySelector('.promo__genre'),
+      movieList = document.querySelector('.promo__interactive-list'),
+      addForm = document.querySelector('form.add'),
+      btnSend = addForm.querySelector('button'),
+      addInput = addForm.querySelector('.adding__input'),
+      checkbox = addForm.querySelector('[type="checkbox"]');
 
-// Классический пример это функция возведения в степень
-//function pow(x, n) {
-//   let result = 1;
+   addForm.addEventListener('submit', (event) => {
+      event.preventDefault();
 
-//   for (let i = 0; i < n; i++) {
-//      result *= x;
-//   }
+      let newFilm = addInput.value; //внутри этого value будет содержаться то что ввел пользователь
+      const favorite = checkbox.checked;
 
-//   return result;
-//}
-
-function pow(x, n) {
-   if (n === 1) {
-      return x;
-   } else {
-      return x * pow(x, n - 1);// рекурсия это когда функция внутри себя сама себя запускает для каких то действий
-   }
-}
-
-// Термины котрые могут пригодится
-// 1термин база рекурсии это случай котрый приводит сразу к завершению функции
-// 2термин шаг рекурсии это запуск вложенной функции но с другим значением
-// 3термин глубина рекурсии общее количество вложенных вызовов вместе с самым первым
-
-// Итеративный подход тоесть цикл он эфетивнее рекурсии это связано с внутренним устройством языка 
-// Рекурсия делает функции проще  хоть и имеет ограничения по глубине тоесть по количеству внутренних вызовов
-
-//! Большинство программистов склоняются в сторону рекурсии
-
-
-pow(2, 1)//2
-pow(2, 2)//4
-pow(2, 3)//8
-pow(2, 4)//16
-
-let students = {
-   js: [{
-      name: 'John',
-      progress: 100
-   }, {
-      name: 'Ivan',
-      progress: 60
-   }],
-
-   html: {
-      basic: [{
-         name: 'Peter',
-         progress: 20
-      }, {
-         name: 'Ann',
-         progress: 18
-      }],
-
-      pro: [{
-         name: 'Sam',
-         progress: 10
-      }]
-   }
-};
-
-// Задача посчитать средний прогресс всех студентов всех курсов
-// 1 Понять сколько студентов в общем 
-// 2 и общее число в процентах
-
-function getTotalProgressByIteration(data) {
-   let total = 0;
-   let students = 0;
-
-
-   // Очень полезный метод для объктов который наз-ся object.values()
-   // Этот метод позволяет получить массив значений перечисляемых свойств объекта в том же порядке  что и если бы работал for in цикл
-
-   for (let course of Object.values(data)) {
-      if (Array.isArray(course)) {
-         students += course.length;
-
-         for (let i = 0; i < course.length; i++) {
-            total += course[i].progress;
+      if (newFilm) {
+         //2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
+         if (newFilm.length > 21) {
+            newFilm = `${newFilm.substring(0, 22)}...`
          }
-      } else {
-         for (let subCourse of Object.values(course)) {
-            students += subCourse.length;
-            for (let i = 0; i < subCourse.length; i++) {
-               total += subCourse[i].progress;
-            }
+         //4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
+         //"Добавляем любимый фильм"
+         if (favorite) {
+            console.log('"Добавляем любимый фильм"')
          }
+         movieDB.movies.push(newFilm);
+         //5) Фильмы должны быть отсортированы по алфавиту */
+         sortArr(movieDB.movies);
+
+         createMovieList(movieDB.movies, movieList);
 
       }
-      //метод Array.isArray() проверяет является ли что то массивом
+
+      event.target.reset();//
+   });
+
+
+
+
+   const deleteAdv = (arr) => {
+      arr.forEach(item => {
+         item.remove();
+      })
    }
 
-   return total / students;
-}
 
-console.log(getTotalProgressByIteration(students));
 
-// Рекурсия упрощает функцию потому что мы все однотипные дейсвтвия заключем в функцию и она внутри себя ее каждый раз вызывает
-// Второй вариант при помощи рекурсии
-let students = {
-   js: [{
-      name: 'John',
-      progress: 100
-   }, {
-      name: 'Ivan',
-      progress: 60
-   }],
+   const makeChanges = () => {
+      genre.textContent = 'драма';
 
-   html: {
-      basic: [{
-         name: 'Peter',
-         progress: 20
-      }, {
-         name: 'Ann',
-         progress: 18
-      }],
-
-      pro: [{
-         name: 'Sam',
-         progress: 10
-      }]
+      poster.style.backgroundImage = "url('img/bg.jpg')";
    }
-};
-function getTotalProgressByRecursion(data) {
-   if (Array.isArray(data)) {
-      let total = 0;
 
-      for (let i = 0; i < data.length; i++) {
-         total += data[i].progress;
-      }
-      return [total, data.length];//При помощи return можно венрнуть все что угодно в том числе и массив с данными
-      // Базоыве понятия
-      // 1термин база рекурсии это случай котрый приводит сразу к завершению функции
-      //Базу мы написали
-   } else {
-      let total = [0, 0];
 
-      for (let subData of Object.values(data)) {
-         const subDataArr = getTotalProgressByRecursion(subData);
-         total[0] += subDataArr[0];
-         total[1] += subDataArr[1];
-      }
-      return total;
+
+   const sortArr = (arr) => {
+      arr.sort()
    }
-}// 2термин шаг рекурсии это запуск вложенной функции но с другим значением
-
-const result = getTotalProgressByRecursion(students);
-
-console.log(result[0] / result[1]);
 
 
 
-// 3термин глубина рекурсии общее количество вложенных вызовов вместе с самым первым
+   //1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" - 
+   //новый фильм добавляется в список. Страница не должна перезагружаться.
+   //Новый фильм должен добавляться в movieDB.movies.
+   //Для получения доступа к значению input - обращаемся к нему как input.value;
+   //P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
+   function createMovieList(films, parent) {
+
+      parent.innerHTML = "";
+      sortArr(films);
+
+      films.forEach((film, i) => {
+         parent.innerHTML += `
+         <li class="promo__interactive-item">${i + 1} ${film}
+            <div class="delete"></div>
+         </li>
+         `;
+      });
+
+      document.querySelectorAll('.delete').forEach((btn, i) => {
+         btn.addEventListener('click', () => {
+            //При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
+            btn.parentElement.remove();
+            movieDB.movies.splice(i, 1);
+
+            createMovieList(films, parent);
+
+         });
+      });
+   }
+
+
+   // Это тоже самое но с Обычнай функцией но предпочтительней со стрелочной функцией
+   //adv.forEach(function (item) {
+   //   item.remove();
+   //}) 
+
+   //Все созданные функции лучше объявлять в конце по очередности 
+   //FunctionExpression вызывается после того как они были созданы и мы не можем расположить их выше 
+   deleteAdv(adv);
+   makeChanges();
+   createMovieList(movieDB.movies, movieList);
+});
+
