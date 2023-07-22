@@ -1,135 +1,49 @@
-
-//1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" - 
-//новый фильм добавляется в список. Страница не должна перезагружаться.
-//Новый фильм должен добавляться в movieDB.movies.
-//Для получения доступа к значению input - обращаемся к нему как input.value;
-//P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
-
-//2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
-
-//3) При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
-
-//4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
-//"Добавляем любимый фильм"
-
-//5) Фильмы должны быть отсортированы по алфавиту */
-
 'use strict';
-//Чтобы четко сказать коду чтобы он ждал загрузки Дом дерева 
-document.addEventListener('DOMContentLoaded', () => {
-   //иногда вместо document можно встретить window но разницы никакой не будет
-   //код который расположен нижк сработает только тогда когда DOM структура будет загружена
-   const movieDB = {
-      movies: [
-         "Логан",
-         "Лига справедливости",
-         "Ла-ла лэнд",
-         "Одержимость",
-         "Скотт Пилигрим против..."
-      ]
-   };
 
-   const adv = document.querySelectorAll('.promo__adv img'),
-      poster = document.querySelector('.promo__bg'),
-      genre = poster.querySelector('.promo__genre'),
-      movieList = document.querySelector('.promo__interactive-list'),
-      addForm = document.querySelector('form.add'),
-      btnSend = addForm.querySelector('button'),
-      addInput = addForm.querySelector('.adding__input'),
-      checkbox = addForm.querySelector('[type="checkbox"]');
+//События на мобильных устройствах 
 
-   addForm.addEventListener('submit', (event) => {
-      event.preventDefault();
+// Самое главное отличие В мобильных браузерах у нас просто не происхдят события мыши
+// В мобильных устройствах есть табы по простому это когда мы прикасаемся к сенсору пальцем и пальцев может быть несколько ведь чаще всего устройства поддерживают multitouch
 
-      let newFilm = addInput.value; //внутри этого value будет содержаться то что ввел пользователь
-      const favorite = checkbox.checked;
+// Мобильные браузеры сами по себе нормально отрабатывает со всеми сайтами и если в десктоп версии установить  событие клика  оно все равно будет работать на мобилке под копотом javascript запускает серию событий чтобы нечего не пропустить
 
-      if (newFilm) {
-         //2) Если название фильма больше, чем 21 символ - обрезать его и добавить три точки
-         if (newFilm.length > 21) {
-            newFilm = `${newFilm.substring(0, 22)}...`
-         }
-         //4) Если в форме стоит галочка "Сделать любимым" - в консоль вывести сообщение: 
-         //"Добавляем любимый фильм"
-         if (favorite) {
-            console.log('"Добавляем любимый фильм"')
-         }
-         movieDB.movies.push(newFilm);
-         //5) Фильмы должны быть отсортированы по алфавиту */
-         sortArr(movieDB.movies);
+// События которые существуют на мобильном браузере всего их 6 и все они начинаются со слова touch
 
-         createMovieList(movieDB.movies, movieList);
+// touchstart это событие у нас сробатывает при возникновении касания к этому элементу
+// touchmove если у нас палец при касании к элементу начинает двигаться по нему то при каждом смешени пальца будет срабатывать touchmove
 
-      }
+// touchend  как только наш палец оторвался от элемента
 
-      event.target.reset();//
-   });
+// Более специфических события
 
+// touchcenter  как только палец вощел на пределы этого элемента
 
+// touchleave это когда палец не оторвался от экрана а продолжил скользить и ушел за пределы этого элемента
+// touchcancel оно возникает тогда когда точка прикосновения больше не регистрируется на поверхности
 
+window.addEventListener("DOMContentLoaded", () => {
+   const box = document.querySelector('.box');
 
-   const deleteAdv = (arr) => {
-      arr.forEach(item => {
-         item.remove();
-      })
-   }
+   box.addEventListener('touchstart', (e) => {
+      e.preventDefault();
 
+      console.log('Start');
+      console.log(e.targetTouches);
+   })
+   box.addEventListener('touchmove', (e) => {
+      e.preventDefault();
 
+      console.log('Move');
 
-   const makeChanges = () => {
-      genre.textContent = 'драма';
+   })
+   box.addEventListener('touchend', (e) => {
+      e.preventDefault();
 
-      poster.style.backgroundImage = "url('img/bg.jpg')";
-   }
+      console.log('End');
+   })
 
-
-
-   const sortArr = (arr) => {
-      arr.sort()
-   }
-
-
-
-   //1) Реализовать функционал, что после заполнения формы и нажатия кнопки "Подтвердить" - 
-   //новый фильм добавляется в список. Страница не должна перезагружаться.
-   //Новый фильм должен добавляться в movieDB.movies.
-   //Для получения доступа к значению input - обращаемся к нему как input.value;
-   //P.S. Здесь есть несколько вариантов решения задачи, принимается любой, но рабочий.
-   function createMovieList(films, parent) {
-
-      parent.innerHTML = "";
-      sortArr(films);
-
-      films.forEach((film, i) => {
-         parent.innerHTML += `
-         <li class="promo__interactive-item">${i + 1} ${film}
-            <div class="delete"></div>
-         </li>
-         `;
-      });
-
-      document.querySelectorAll('.delete').forEach((btn, i) => {
-         btn.addEventListener('click', () => {
-            //При клике на мусорную корзину - элемент будет удаляться из списка (сложно)
-            btn.parentElement.remove();
-            movieDB.movies.splice(i, 1);
-
-            createMovieList(films, parent);
-
-         });
-      });
-   }
-
-
-   // Это тоже самое но с Обычнай функцией но предпочтительней со стрелочной функцией
-   //adv.forEach(function (item) {
-   //   item.remove();
-   //}) 
-
-   //Все созданные функции лучше объявлять в конце по очередности 
-   //FunctionExpression вызывается после того как они были созданы и мы не можем расположить их выше 
-   deleteAdv(adv);
-   makeChanges();
-   createMovieList(movieDB.movies, movieList);
+   // Три главных свойства при работе с устройством
+   // touches это свойсво выдает нам список всех пальцев которые сейчас взаимодействуют с экраном
+   // targetTouches если нас интерисуют все пальцы которые взаимодействуют  именно с конкретным элементом 
+   // changedTouches это список пальцев которые учавствуют в текущем событии
 });
-
