@@ -5,7 +5,8 @@
 }
 
 .box {
-    width: 300px;
-    height: 250px;
-    background-color: olive;
+    width: 150px;
+    height: 150px;
+    margin-bottom: 10px;
+    background-color: black;
 }
