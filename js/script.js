@@ -1,77 +1,57 @@
-'use strict';
+"use strict"
 
-// ClassList делегирование событий
-
-// Чтобы обратиться к списку классов нам необходимо прописать .classList
-const btns = document.querySelectorAll('button'),
-   wrapper = document.querySelector('.btn-block');
+// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
 
 
+//Добавляем табы 
 
-//classList.length это свойство сlassList.item() это метод
-// узнаем сколько классов есть у кнопки
-//console.log(btns[0].classList.length);
-//item позволяет нам получить позволяет нам получить класс который распологается под определеннным индексом 
-//console.log(btns[0].classList.item(0));
+// Назначение глобального обработчика событий DOMContentloaded
+window.addEventListener('DOMContentLoaded', () => {
 
-// Максимально  полезные методы add remove toggle их чаще всего будем использовать в скриптах
-//Добавляем класс в элемент при помощи add
-//Можем добавлять несколько классов в add и remove через запятую
-//console.log(btns[0].classList.add('red', 'dsadasda'));
-//Удаляем определенные классы
-//console.log(btns[0].classList.remove('red'));
+   // У нас есть три задачи
+   // первое это функция которая будет скрывать ненужные нам табы
+   // Показать нужный таб
+   // назначить обработчики событий на меню
 
-//toggle Если есть класс с таким именем удаляет его а если нет добавляет
-//console.log(btns[0].classList.toggle('red'));
+   const tabs = document.querySelectorAll('.tabheader__item'),
+      tabsContent = document.querySelectorAll('.tabcontent'),
+      tabsParent = document.querySelector('.tabheader__items');
 
-// метод contains() который очень часто используется в условии 
-// Он позволяет  нам проверять наличие класса на определенном  элементе определенного класса и возвращает boolean значение если клас есть то возвращает true а если класса нет возвращает false
-//if (btns[1].classList.contains('red')) {
-//   console.log('red');
-//}
+   function hideTabContent() {
+      tabsContent.forEach(item => {
+         item.classList.add('hide');
+         item.classList.remove('show', 'fade');
+      });
 
-
-btns[0].addEventListener('click', () => {
-   //if (!btns[1].classList.contains('red')) {
-   //   btns[1].classList.add('red');
-   //} else {
-   //   btns[1].classList.remove('red')
-   //}
-   // В методе toggle  содержится такая же логическая конструкция как и наверху
-   // Но в слжных скриптах такое поаедение когда мы просто задаем один toggle недоступно
-   // иногда нам вручную нужно проверить если какй то класс
-   // Всегда когда прописываете такие скрипты просто проговаривайте логическую цепочку дейсвий которую хотите сделать
-   btns[1].classList.toggle('red');
-});
-//Класс name уже устарел и не стоит его использовать
-//console.log(btns[0].className);
-
-//Делегирование событий
-// Суть в том что мы берем элемент который является родителем этих кнопок и работаем непосредственно с ним
-// event  содержит всю информацию о том элементе на котором происходит событие
-wrapper.addEventListener('click', (event) => {
-   if (event.target && event.target.tagName == "BUTTON") {
-      console.log('Hello');
+      tabs.forEach(item => {
+         item.classList.remove('tabheader__item_active');
+      });
    }
-});
-// Делегирование если элемент подходит под условия то на нем будет срабатыывать та функция которую мы написали или передали
-// Мы делегируем события родителя на его потомков
 
-//Независимо от того когда этот элемент появился он будет выполнять эти действия
+   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
+   function showTabContent(i = 0) {
+      tabsContent[i].classList.add('show', 'fade');
+      tabsContent[i].classList.remove('hide');
+      tabs[i].classList.add('tabheader__item_active');
+   }
 
-//Здесь последний добавленный после этого кода элемент не сработает потому что этот код нечего не знает о созданном элементе
-btns.forEach(btn => {
-   btn.addEventListener('click', () => {
-      console.log('hello')
+
+   hideTabContent();
+   showTabContent();
+
+   tabsParent.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (target && target.classList.contains('tabheader__item')) {
+         tabs.forEach((item, i) => {
+            if (target == item) {
+               hideTabContent();
+               showTabContent(i);
+            }
+         })
+      }
    });
+
+
+
 });
-
-const btn = document.createElement('button');
-
-btn.classList.add('red');
-wrapper.append(btn);
-
-//Итог делегирование событий это один из самых полезных приемев для работы с дом деревом
-// Он отлично подходит если есть много элементов с одинаковыми обработчиками  причем при динамическо изменении они точно также будут применятся к новым элементам
-// И таким образом мы напишем намного меньше кода и экономим память браузера ведь обработчик события всего лишь один 
-
