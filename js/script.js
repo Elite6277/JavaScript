@@ -1,60 +1,125 @@
 "use strict"
 
-//(WeakMap и WeakSet)
+// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
 
-//let user = { name: 'Ivan' };
 
-//let map = new WeakMap();
-//map.set(user, 'data');
+//Добавляем табы 
 
-//user = null;
+// Назначение глобального обработчика событий DOMContentloaded
+window.addEventListener('DOMContentLoaded', () => {
 
-//console.log(map.has(user));
+   // У нас есть три задачи
+   // первое это функция которая будет скрывать ненужные нам табы
+   // Показать нужный таб
+   // назначить обработчики событий на меню
 
-let cache = new WeakMap();
 
-function cacheUser(user) {
-   if (!cache.has(user)) {
-      cache.set(user, Date.now());
+   // Tabs
+   const tabs = document.querySelectorAll('.tabheader__item'),
+      tabsContent = document.querySelectorAll('.tabcontent'),
+      tabsParent = document.querySelector('.tabheader__items');
+
+   function hideTabContent() {
+      tabsContent.forEach(item => {
+         item.classList.add('hide');
+         item.classList.remove('show', 'fade');
+      });
+
+      tabs.forEach(item => {
+         item.classList.remove('tabheader__item_active');
+      });
    }
-   return cache.get(user);
-}
 
-let lena = { name: 'Elena' };
-let alex = { name: 'Alex' };
-
-cacheUser(lena);
-cacheUser(alex);
-
-lena = null;
-
-console.log(cache.has(lena));
-console.log(cache.has(alex));
-
-// WeakSet
-// add, has, delete
+   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
+   function showTabContent(i = 0) {
+      tabsContent[i].classList.add('show', 'fade');
+      tabsContent[i].classList.remove('hide');
+      tabs[i].classList.add('tabheader__item_active');
+   }
 
 
-let messages = [
-   { text: 'Hello', from: 'John' },
-   { text: 'World', from: 'Alex' },
-   { text: '...', from: 'M' },
-];
+   hideTabContent();
+   showTabContent();
 
-// Weak Set помогает нам хранить набор каких то данных и легко проверять
-//Weak Set Очищается автомотически
-let readMessages = new WeakSet();
+   tabsParent.addEventListener('click', (event) => {
+      const target = event.target;
 
-readMessages.add(messages[0]);
-//readMessages.add(messages[1]);
+      if (target && target.classList.contains('tabheader__item')) {
+         tabs.forEach((item, i) => {
+            if (target == item) {
+               hideTabContent();
+               showTabContent(i);
+            }
+         })
+      }
+   });
+
+   // Timer
+
+   const deadline = '2023-08.2';
+
+   // задачаа нашей функции это получить разницу между датами
+   function getTimeRemaining(endtime) {
+      let days, hours, minutes, seconds;
+      const t = Date.parse(endtime) - Date.parse(new Date());
+      if (t <= 0) {
+         days = 0;
+         hours = 0;
+         minutes = 0;
+         seconds = 0;
+      } else {
+         days = Math.floor(t / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+            minutes = Math.floor((t / 1000 / 60) % 60),
+            seconds = Math.floor((t / 1000) % 60);
+      }
+
+      return {
+         'total': t,
+         'days': days,
+         'hours': hours,
+         'minutes': minutes,
+         'seconds': seconds,
+      };
+
+   }
+
+   function getZero(num) {
+      if (num >= 0 && num < 10) {
+         return `0${num}`;
+      } else {
+         return num;
+      }
+   }
 
 
-readMessages.add(messages[0]);
-messages.shift();
+   // Функция которая будет устонавливать timer на страничку
+   function setClock(selector, endtime) {
+      const timer = document.querySelector(selector),
+         days = timer.querySelector('#days'),
+         hours = timer.querySelector('#hours'),
+         minutes = timer.querySelector('#minutes'),
+         seconds = timer.querySelector('#seconds'),
+         timeInterval = setInterval(updateClock, 1000);
 
-console.log(readMessages.has(messages[0]));
 
-//WeakMap и WeakSet выполняют задачу того что они являются дополнительным хранилищем  управляемых из каких то других мест в коде
-// ЗДесь мы работаем с объектами если на них нет ссылок и они содержаться только в этих структурах то они будут удалены из памяти
 
-// Эти структуры данных они контролируют  использование памяти и всегда нужно помнить про ограничения с ними
+      updateClock();
+
+      // Функция которая будет обновлять наш Timer Каждую секунду
+      function updateClock() {
+         const t = getTimeRemaining(endtime);
+
+         days.innerHTML = getZero(t.days);
+         hours.innerHTML = getZero(t.hours);
+         minutes.innerHTML = getZero(t.minutes);
+         seconds.innerHTML = getZero(t.seconds);
+
+         if (t.total <= 0) {
+            clearInterval(timeInterval);
+         }
+      }
+   }
+
+   setClock('.timer', deadline);
+});
