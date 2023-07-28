@@ -122,4 +122,103 @@ window.addEventListener('DOMContentLoaded', () => {
    }
 
    setClock('.timer', deadline);
+
+   // Modal
+   const modalTrigger = document.querySelectorAll('[data-modal]'),
+      modal = document.querySelector('.modal'),
+      //modalContent = document.querySelector('.modal__content'),
+      modalCloseBtn = document.querySelector('[data-close]');
+
+   //Открытие и закрытие модального окна с помошью inline стилей
+   //modalTrigger.addEventListener('click', () => {
+   //   modal.style.display = 'block';
+   //})
+   //function ModalOpenClose() {
+   //   modalTrigger.forEach(btn => {
+   //      btn.addEventListener('click', () => {
+   //         modal.style.display = 'block';
+   //         document.body.style.overflow = 'hidden';
+   //         modalCloseBtn.addEventListener('click', () => {
+   //            modal.style.display = 'none';
+   //            document.body.style.overflow = '';
+   //         });
+   //      });
+   //   });
+   //}
+   //ModalOpenClose();
+
+   // Закрытие и открытие модально окна с помошью готовых css классов show hide
+
+   //function ModalOpenClose() {
+   //   modalTrigger.forEach(btn => {
+   //      btn.addEventListener('click', () => {
+   //         modal.classList.add('show');
+   //         modal.classList.remove('hide');
+   //         document.body.style.overflow = 'hidden';
+   //         modalCloseBtn.addEventListener('click', () => {
+   //            modal.classList.add('hide');
+   //            modal.classList.remove('show');
+   //            document.body.style.overflow = '';
+   //         });
+   //      });
+   //   });
+   //}
+
+   //Вариант Ивана Петреченко
+
+   function openModal() {
+      modalTrigger.forEach(btn => {
+         btn.addEventListener('click', () => {
+            modal.classList.add('show');
+            modal.classList.remove('hide');
+            document.body.style.overflow = 'hidden';
+         });
+      });
+   }
+   //function closeModal() {
+   //   modalCloseBtn.addEventListener('click', () => {
+   //      modal.classList.add('hide');
+   //      modal.classList.remove('show');
+   //      document.body.style.overflow = '';
+   //   });
+   //   modal.addEventListener('click', () => {
+   //      modal.classList.add('hide');
+   //      modal.classList.remove('show');
+   //      document.body.style.overflow = '';
+   //   });
+   //}
+
+   //modal.addEventListener('click', (e) => {
+   //   if (e.target == modal) {
+   //      modal.classList.add('hide');
+   //      modal.classList.remove('show');
+   //      document.body.style.overflow = '';
+   //   }
+   //})
+
+   openModal();
+   //closeModal();
+
+   //closeModal более оптимизированный вариант
+
+   function closeModal() {
+      modal.classList.add('hide');
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+   }
+
+   modalCloseBtn.addEventListener('click', closeModal);
+
+   modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+         closeModal();
+      }
+   });
+
+   document.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' && modal.classList.contains('show')) {
+         closeModal();
+      }
+   });
 });
+
