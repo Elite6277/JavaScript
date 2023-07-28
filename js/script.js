@@ -129,77 +129,18 @@ window.addEventListener('DOMContentLoaded', () => {
       //modalContent = document.querySelector('.modal__content'),
       modalCloseBtn = document.querySelector('[data-close]');
 
-   //Открытие и закрытие модального окна с помошью inline стилей
-   //modalTrigger.addEventListener('click', () => {
-   //   modal.style.display = 'block';
-   //})
-   //function ModalOpenClose() {
-   //   modalTrigger.forEach(btn => {
-   //      btn.addEventListener('click', () => {
-   //         modal.style.display = 'block';
-   //         document.body.style.overflow = 'hidden';
-   //         modalCloseBtn.addEventListener('click', () => {
-   //            modal.style.display = 'none';
-   //            document.body.style.overflow = '';
-   //         });
-   //      });
-   //   });
-   //}
-   //ModalOpenClose();
-
-   // Закрытие и открытие модально окна с помошью готовых css классов show hide
-
-   //function ModalOpenClose() {
-   //   modalTrigger.forEach(btn => {
-   //      btn.addEventListener('click', () => {
-   //         modal.classList.add('show');
-   //         modal.classList.remove('hide');
-   //         document.body.style.overflow = 'hidden';
-   //         modalCloseBtn.addEventListener('click', () => {
-   //            modal.classList.add('hide');
-   //            modal.classList.remove('show');
-   //            document.body.style.overflow = '';
-   //         });
-   //      });
-   //   });
-   //}
 
    //Вариант Ивана Петреченко
-
    function openModal() {
-      modalTrigger.forEach(btn => {
-         btn.addEventListener('click', () => {
-            modal.classList.add('show');
-            modal.classList.remove('hide');
-            document.body.style.overflow = 'hidden';
-         });
-      });
+      modal.classList.add('show');
+      modal.classList.remove('hide');
+      document.body.style.overflow = 'hidden';
+      clearInterval(modalTimerId);
+
    }
-   //function closeModal() {
-   //   modalCloseBtn.addEventListener('click', () => {
-   //      modal.classList.add('hide');
-   //      modal.classList.remove('show');
-   //      document.body.style.overflow = '';
-   //   });
-   //   modal.addEventListener('click', () => {
-   //      modal.classList.add('hide');
-   //      modal.classList.remove('show');
-   //      document.body.style.overflow = '';
-   //   });
-   //}
-
-   //modal.addEventListener('click', (e) => {
-   //   if (e.target == modal) {
-   //      modal.classList.add('hide');
-   //      modal.classList.remove('show');
-   //      document.body.style.overflow = '';
-   //   }
-   //})
-
-   openModal();
-   //closeModal();
-
-   //closeModal более оптимизированный вариант
+   modalTrigger.forEach(btn => {
+      btn.addEventListener('click', openModal);
+   });
 
    function closeModal() {
       modal.classList.add('hide');
@@ -220,5 +161,18 @@ window.addEventListener('DOMContentLoaded', () => {
          closeModal();
       }
    });
+
+
+
+   const modalTimerId = setTimeout(openModal, 5000);
+
+   function showModalByScroll() {
+      if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
+         openModal();
+         window.removeEventListener('scroll', showModalByScroll);
+      }
+   }
+
+   window.addEventListener('scroll', showModalByScroll);
 });
 
