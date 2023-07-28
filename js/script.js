@@ -1,178 +1,87 @@
 "use strict"
 
-// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
+//? Функции конструкторы
+
+// Про классификации типов данных мы помним что функция по своей сути является объеком и по идее в нее можно записать какие то методы и свойства .
+//Так же в самом начале своего пути  существует длинный синтаксис для создания типов данных которая начинается с ключевого слова new 
+
+// Создаем новое число 
+const num = new Number(3);
+console.log(num);
+
+//  Создаем новую функцию
+// Если такая функция будет содержать методы и свойства она в итоге создаст нам новый объект
+// Тоесть созданием новой функции мы с вами создаем новый объект свойства которого уже прописаны в этой функции
+
+const num = new Function(3);
+console.log(num);
+
+// Теперь нормальеый пример без устаревшего синтаксиса
+
+// Такие функции у нас предназначены для конструирования объектов и создания множества подобных копий
+// По факту это такой прототип от которого мы постоянно можем отпачковывать определенных потомков mercedes lada skoda и прочее все они чем то различаются но в общем они похожи точно также мы можем передавать туда аргументы по типу двигателя колес и различных запчастей но в общем у них остается один и тот же смысл
+// В таких функция нам не нужен return мы нечего не возвращем 
+function User(name, id) {
+   // Теперь когды мы сипользовали такой синтаксис наша функция стала конструктором
+   // С ее помошью теперь мы можем создавать новых пользователей
+   // Кроме свойств как и в обычном объекте мы можем написать и какие то методы
+   this.name = name;
+   this.id = id;
+   this.human = true;
+   this.hello = function () { // создав один раз метод прямо  в нашем прототипе он будет у каждого из наших потомков
+      console.log(`Hello ${this.name}`);// мы можем уже использовать те свойства которые находятся прямо в объекте 
+   };
+}
+
+//this для каждого отдельного пользователя
+
+// При помощи свойтва  prototype мы можем добавлять новые методы или свойства в наш конструктор и они будут прототипно наследоваться у потомков
+// Этот прием используется когда у нас нет доступа к нашему прототипу мы его не можем менять по каким то причинам но его нужно немноко модифицировать тоесть добавить каких то плюшек
+
+// Теперь  у нас прототипно уже будет наследоваться и этот метод
+// И он появиться у всех потомков которые были созданы после  объявления этого метода;
+User.prototype.exit = function () {
+   console.log(`Пользователь ${this.name} ушел`);
+}
 
 
-//Добавляем табы 
 
-// Назначение глобального обработчика событий DOMContentloaded
-window.addEventListener('DOMContentLoaded', () => {
+const medet = new User('Medet', 28); // Внутри этой переменной у нас  будет находится уже не функция а объект 
+//потому что функция user у нас стала конструктором и теперь когда она вызывается с помошью ключеового слова  new  она создает новый объект с тесми свойствами которые мы записали
+const alex = new User('Alex', 20);
 
-   // У нас есть три задачи
-   // первое это функция которая будет скрывать ненужные нам табы
-   // Показать нужный таб
-   // назначить обработчики событий на меню
+// Заметье что мы указываем не прототип  как это было в setPrototype когда одно наследуеться от другого а просто добавляем новые свойства либо методы в уже существующий наш объект
 
+medet.exit();
 
-   // Tabs
-   const tabs = document.querySelectorAll('.tabheader__item'),
-      tabsContent = document.querySelectorAll('.tabcontent'),
-      tabsParent = document.querySelector('.tabheader__items');
+medet.hello();
+alex.hello();
 
-   function hideTabContent() {
-      tabsContent.forEach(item => {
-         item.classList.add('hide');
-         item.classList.remove('show', 'fade');
-      });
+console.log(medet);
+console.log(alex);
 
-      tabs.forEach(item => {
-         item.classList.remove('tabheader__item_active');
-      });
+// Конструкторы нам необходимы для создания новых однотипных объектов
+// в практике это могут быть новые пользователи сайта товары в магазинах ролики на ютубе везде где есть шаблонизация причем даже компоненты сайтов могут создаваться таким образом
+
+//!Важный момент
+// Все что выше мы разбирали стандарты ES5 это то как на самом деле происходит под капотом JS его внутренности
+// В стандарте ES6 у нас появились классы 
+// Классы это так называемые синтактический сахар, тоесть красивая обертка всего функционала которая существует внутри
+// Классы удобнее использовать поэтому весь реальный функцонал прямо сейчас создается именно с использованием классов
+// Если спросять можно ответить что в JS классов изначально не было классов они появились уже в качестве синтактического сахара
+
+//Пример содания классов 
+
+class User {
+   constructor(name, id) {
+      this.name = name;
+      this.id = id;
+      this.human = true;
    }
-
-   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
-   function showTabContent(i = 0) {
-      tabsContent[i].classList.add('show', 'fade');
-      tabsContent[i].classList.remove('hide');
-      tabs[i].classList.add('tabheader__item_active');
+   hello() {
+      console.log(`Hello ${this.name}`);
    }
-
-
-   hideTabContent();
-   showTabContent();
-
-   tabsParent.addEventListener('click', (event) => {
-      const target = event.target;
-
-      if (target && target.classList.contains('tabheader__item')) {
-         tabs.forEach((item, i) => {
-            if (target == item) {
-               hideTabContent();
-               showTabContent(i);
-            }
-         })
-      }
-   });
-
-   // Timer
-
-   const deadline = '2023-08.2';
-
-   // задачаа нашей функции это получить разницу между датами
-   function getTimeRemaining(endtime) {
-      let days, hours, minutes, seconds;
-      const t = Date.parse(endtime) - Date.parse(new Date());
-      if (t <= 0) {
-         days = 0;
-         hours = 0;
-         minutes = 0;
-         seconds = 0;
-      } else {
-         days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-            minutes = Math.floor((t / 1000 / 60) % 60),
-            seconds = Math.floor((t / 1000) % 60);
-      }
-
-      return {
-         'total': t,
-         'days': days,
-         'hours': hours,
-         'minutes': minutes,
-         'seconds': seconds,
-      };
-
+   exit() {
+      console.log(`Пользователь ${this.name} ушел`);
    }
-
-   function getZero(num) {
-      if (num >= 0 && num < 10) {
-         return `0${num}`;
-      } else {
-         return num;
-      }
-   }
-
-
-   // Функция которая будет устонавливать timer на страничку
-   function setClock(selector, endtime) {
-      const timer = document.querySelector(selector),
-         days = timer.querySelector('#days'),
-         hours = timer.querySelector('#hours'),
-         minutes = timer.querySelector('#minutes'),
-         seconds = timer.querySelector('#seconds'),
-         timeInterval = setInterval(updateClock, 1000);
-
-
-
-      updateClock();
-
-      // Функция которая будет обновлять наш Timer Каждую секунду
-      function updateClock() {
-         const t = getTimeRemaining(endtime);
-
-         days.innerHTML = getZero(t.days);
-         hours.innerHTML = getZero(t.hours);
-         minutes.innerHTML = getZero(t.minutes);
-         seconds.innerHTML = getZero(t.seconds);
-
-         if (t.total <= 0) {
-            clearInterval(timeInterval);
-         }
-      }
-   }
-
-   setClock('.timer', deadline);
-
-   // Modal
-   const modalTrigger = document.querySelectorAll('[data-modal]'),
-      modal = document.querySelector('.modal'),
-      //modalContent = document.querySelector('.modal__content'),
-      modalCloseBtn = document.querySelector('[data-close]');
-
-
-   //Вариант Ивана Петреченко
-   function openModal() {
-      modal.classList.add('show');
-      modal.classList.remove('hide');
-      document.body.style.overflow = 'hidden';
-      clearInterval(modalTimerId);
-
-   }
-   modalTrigger.forEach(btn => {
-      btn.addEventListener('click', openModal);
-   });
-
-   function closeModal() {
-      modal.classList.add('hide');
-      modal.classList.remove('show');
-      document.body.style.overflow = '';
-   }
-
-   modalCloseBtn.addEventListener('click', closeModal);
-
-   modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-         closeModal();
-      }
-   });
-
-   document.addEventListener('keydown', (e) => {
-      if (e.code === 'Escape' && modal.classList.contains('show')) {
-         closeModal();
-      }
-   });
-
-
-
-   const modalTimerId = setTimeout(openModal, 5000);
-
-   function showModalByScroll() {
-      if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
-         openModal();
-         window.removeEventListener('scroll', showModalByScroll);
-      }
-   }
-
-   window.addEventListener('scroll', showModalByScroll);
-});
-
+}
