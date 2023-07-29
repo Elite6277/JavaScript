@@ -1,77 +1,243 @@
 "use strict"
 
-// Классы (ES6)
-// По простому классы это красивая обертка функции конструкторов еще можно встретить понятия как синтактический сахар так что классы внутри это все те же функции
-// Классы мы будем использовать особенно при создании веб приложений
+// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
 
-// Предназначение этого приема у нас чаще всего на сайтах в наших веб приложениях будет какая то шаблонизация 
-// Вмсето того чтобы каждый раз создавать слайдер описывать статью иди какие методы свойства и тд и тп  мы с вами создаем один шаблон который говорит в общем что будет делать этот компонент и потом от этого шаблона уже создаем отдельных экземпляров отдельных потомков котороые будут помещятся на наш сайт
-// Таким образом используя только один участок кода мы можем создать много компонетов на сайтах котрые будут чем то отличатся
 
-// Синтаксис класса
-// 1 Начинается создание классов с ключевого слова  class дальше мы задаем название класса и он всегда должен начинаться с большой буквы это актульно для библиотек или фраемворков которые в будущем мы будем использовать
+//Добавляем табы 
 
-// 2 Теперь нам нужно его сконструировать тоесть какие вещи у нас будут включатся в этот шаблон что будет уметь этот класс какие вещи какие свойства в нем будут уже заданы изначально  и тому подобное
-// При этом самый важный параметр это те аргументы которые будут передаваться из вне мы уже видели чтобы создать функцию конструктор мы во внутрь помещаем какие то аргументы которые кастомизируют этот элемент
-// Чтобы сконструировать наш клас у нас есть такое свойство как конструктор constructor(){}
-// В () мы как обычную функцию записываем те аргументы которые будут приходить
-class Rectangle {
-   constructor(height, width) { // Эти параметры будут приходить из вне при создании экземпляра класса
-      this.height = height;
-      this.width = width;
+// Назначение глобального обработчика событий DOMContentloaded
+window.addEventListener('DOMContentLoaded', () => {
+
+   // У нас есть три задачи
+   // первое это функция которая будет скрывать ненужные нам табы
+   // Показать нужный таб
+   // назначить обработчики событий на меню
+
+
+   // Tabs
+   const tabs = document.querySelectorAll('.tabheader__item'),
+      tabsContent = document.querySelectorAll('.tabcontent'),
+      tabsParent = document.querySelector('.tabheader__items');
+
+   function hideTabContent() {
+      tabsContent.forEach(item => {
+         item.classList.add('hide');
+         item.classList.remove('show', 'fade');
+      });
+
+      tabs.forEach(item => {
+         item.classList.remove('tabheader__item_active');
+      });
    }
 
-   calcArea() {
-      return this.height * this.width;
-   }
-}
-
-
-// Этот класс будет наследоваться от большого класса Reactangle он будет у него брать свойтва и методв которые в нем записаны 
-// Для этого есть ключевое слово extends-"наследуется от" и дальше от кого Rectangle
-class ColoredRectangleWithText extends Rectangle {
-   constructor(height, width, text, bgColor) {
-      //Чтобы не копировать вот это this.height = height; this.width = width; каждый раз у нас есть метод super()
-      super(height, width)//Она вызывает супер конструктор родителя, она просто вызвает тоже самое что было у родителя
-      //Но есть одно главное правило которого никогда нельзя нарушать это то что super() должна всегда быть на первое месте в конструкторе
-      //Помимо этого внутрь super(height,width) мы можем указать те свойства  которые мы хотим использовать нам не всегда нужны все свойства  
-      this.text = text;
-      this.bgColor = bgColor;
+   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
+   function showTabContent(i = 0) {
+      tabsContent[i].classList.add('show', 'fade');
+      tabsContent[i].classList.remove('hide');
+      tabs[i].classList.add('tabheader__item_active');
    }
 
-   showMyProps() {
-      console.log(`Текст: ${this.text}, цвет: ${this.bgColor}`);
+
+   hideTabContent();
+   showTabContent();
+
+   tabsParent.addEventListener('click', (event) => {
+      const target = event.target;
+
+      if (target && target.classList.contains('tabheader__item')) {
+         tabs.forEach((item, i) => {
+            if (target == item) {
+               hideTabContent();
+               showTabContent(i);
+            }
+         })
+      }
+   });
+
+   // Timer
+
+   const deadline = '2023-08.2';
+
+   // задачаа нашей функции это получить разницу между датами
+   function getTimeRemaining(endtime) {
+      let days, hours, minutes, seconds;
+      const t = Date.parse(endtime) - Date.parse(new Date());
+      if (t <= 0) {
+         days = 0;
+         hours = 0;
+         minutes = 0;
+         seconds = 0;
+      } else {
+         days = Math.floor(t / (1000 * 60 * 60 * 24)),
+            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
+            minutes = Math.floor((t / 1000 / 60) % 60),
+            seconds = Math.floor((t / 1000) % 60);
+      }
+
+      return {
+         'total': t,
+         'days': days,
+         'hours': hours,
+         'minutes': minutes,
+         'seconds': seconds,
+      };
+
    }
-}
 
-// сздесь мы создаем div это наш новый div во внутрь помещаем конструктор
-//Теперь у нас есть объект который содержит все внесенные свойства
-const div = new ColoredRectangleWithText(25, 10, 'Hello World', 'red');
-
-// Метод котоый существует внутри ColoredRectangleWithText
-div.showMyProps();
-// А здесь уже используем метод который используется в его родителе от которого он наследовался Rectangle
-console.log(div.calcArea());
+   function getZero(num) {
+      if (num >= 0 && num < 10) {
+         return `0${num}`;
+      } else {
+         return num;
+      }
+   }
 
 
+   // Функция которая будет устонавливать timer на страничку
+   function setClock(selector, endtime) {
+      const timer = document.querySelector(selector),
+         days = timer.querySelector('#days'),
+         hours = timer.querySelector('#hours'),
+         minutes = timer.querySelector('#minutes'),
+         seconds = timer.querySelector('#seconds'),
+         timeInterval = setInterval(updateClock, 1000);
 
-// Здесь в переменную помещаем  объект который создается при помощи класса
-// Теперь у нас в этой перменной лежит объект у которого есть два свойства height with и 1 метод calcArea
-const square = new Rectangle(10, 10);
-const long = new Rectangle(20, 100);
 
-// Мы при помощи классов создали две очень разные конструкции которые содержут разные свойства  но при этом содержут один и тот же метод calcArea
-console.log(long.calcArea());
-console.log(square.calcArea());
 
-//Когда мы передали аргументы мы должны их записать в свойсто этого нового объекта
-// Классы как и функции кострукторы служат нам  для создания новых объекотов и если мы внутри будем обращаться к this то мы будем обращаться к экземпляру нового созданного объекта к каждому отдельно
-// И в каждый такой новый объект мы записываем свойства например height и берем мы его из аргументов и записываеться в свойства
-// Внутри между методами не нужно ставить ; точку с запятой это будет ошибка
-// Здесь методы записываются просто название функции ,без ключевого слово function
+      updateClock();
 
-// Принципы объектно ориентированного програмирования
-// 1 Абстракция когда мы отделаем концепцию от ее экземпляра 
-//концепция это весь class Reactangle  а экземпляр это то что создано на основе концепции
-// 2 Важный принцип это наследование тоесть способность нашего объекта или класса базироваться на другом объекте или класе
-// Это главный механизм для повторного использования какого то кода наследственное отношение классов у нас четко будет определять их иерархию
+      // Функция которая будет обновлять наш Timer Каждую секунду
+      function updateClock() {
+         const t = getTimeRemaining(endtime);
+
+         days.innerHTML = getZero(t.days);
+         hours.innerHTML = getZero(t.hours);
+         minutes.innerHTML = getZero(t.minutes);
+         seconds.innerHTML = getZero(t.seconds);
+
+         if (t.total <= 0) {
+            clearInterval(timeInterval);
+         }
+      }
+   }
+
+   setClock('.timer', deadline);
+
+   // Modal
+   const modalTrigger = document.querySelectorAll('[data-modal]'),
+      modal = document.querySelector('.modal'),
+      //modalContent = document.querySelector('.modal__content'),
+      modalCloseBtn = document.querySelector('[data-close]');
+
+
+   //Вариант Ивана Петреченко
+   function openModal() {
+      modal.classList.add('show');
+      modal.classList.remove('hide');
+      document.body.style.overflow = 'hidden';
+      clearInterval(modalTimerId);
+
+   }
+   modalTrigger.forEach(btn => {
+      btn.addEventListener('click', openModal);
+   });
+
+   function closeModal() {
+      modal.classList.add('hide');
+      modal.classList.remove('show');
+      document.body.style.overflow = '';
+   }
+
+   modalCloseBtn.addEventListener('click', closeModal);
+
+   modal.addEventListener('click', (e) => {
+      if (e.target === modal) {
+         closeModal();
+      }
+   });
+
+   document.addEventListener('keydown', (e) => {
+      if (e.code === 'Escape' && modal.classList.contains('show')) {
+         closeModal();
+      }
+   });
+
+
+
+   const modalTimerId = setTimeout(openModal, 5000);
+
+   function showModalByScroll() {
+      if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
+         openModal();
+         window.removeEventListener('scroll', showModalByScroll);
+      }
+   }
+
+   window.addEventListener('scroll', showModalByScroll);
+
+   //Используем классы для карточек
+
+   class MenuCard {
+      constructor(src, alt, title, descr, price, parentSelector) {
+         this.src = src;
+         this.alt = alt;
+         this.title = title;
+         this.descr = descr;
+         this.price = price;
+         this.parent = document.querySelector(parentSelector);
+         this.transfer = 27;
+         this.changeToUAH();
+      }
+
+      changeToUAH() {
+         this.price = this.price * this.transfer;
+      }
+
+      render() {
+         const element = document.createElement('div');
+         element.innerHTML = `
+         <div class="menu__item">
+               <img src=${this.src} alt=${this.alt}>
+               <h3 class="menu__item-subtitle">${this.title}</h3>
+               <div class="menu__item-descr">${this.descr}</div>
+               <div class="menu__item-divider"></div>
+               <div class="menu__item-price">
+                  <div class="menu__item-cost">Цена:</div>
+                  <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+               </div>
+            </div>
+         `;
+         this.parent.append(element);
+      }
+   }
+   // Для того чтобы использовать метод и объект на месте мы просто прописываем new MenuCard без присваивание к какойто переменнной
+   //   Мы создаем здесь объект сразу же на нем  вызываем метод render он что то сделает что то нам отработает со страницей и он исчезнет потому что больше на него не будет ссылок мы нигде не сохраняем этот объект, это удобно когда нам только один раз нужно его использовать
+   new MenuCard(
+      "img/tabs/vegy.jpg",
+      "vegy",
+      'Меню "Фитнес"',
+      'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
+      9,
+      '.menu .container'
+   ).render();
+
+
+   new MenuCard(
+      "img/tabs/elite.jpg",
+      "elite",
+      'Меню “Премиум”',
+      'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
+      14,
+      '.menu .container'
+   ).render();
+
+   new MenuCard(
+      "img/tabs/post.jpg",
+      "post",
+      'Меню "Постное"',
+      'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие    продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество  белков за счет тофу и импортных вегетарианских стейков.',
+      21,
+      '.menu .container'
+   ).render();
+});
+
