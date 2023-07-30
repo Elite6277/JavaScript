@@ -1,253 +1,97 @@
-"use strict"
+'use strict';
 
-//Используем классы в реальной работе 
+//AJAX и общение с сервером
 
-// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
+// Асинхронное выполнение задач и общение с сервером
+// Один из самых наглядных примеров это фильтры в интернет магазине наш клиент наша страница делает запрос к серверу и получает от него лишь часть страницы только необходимую информацию  при этом  весь остальной интерфейс который был на странице он не обновляется он как был так и остается
 
+// Зачем это делается
+// 1 Это удлбно красиво и происходит интерактивная обработка абсолютно любых событий пользователь нажал какую то кнопочку мы что то подгрузили пользователь начал что то фильтровать мы взяли и опять что то подгрузили
+// 2 У нас происходит ускорение реакции интерфейса мы не перезагружаем каждый раз страничку мы просто обновяем часть контента
+// 3 Уменьшаем нагрузку на сервер и экономим трафик пользователя
 
-//Добавляем табы 
+// Есть недостатки
+// 1 У пользователя должен быть включен JavaScript и при плохом соединенни с интернетом  может проявлятся некоторое некорректоное поведение что то может не подгрузиться что то может подвиснуть и тд и тп
+// До 2017 года также была проблема с SEO оптимизацией такого контента но теперь она тоже решаем и это уже не такая уж и проблема
 
-// Назначение глобального обработчика событий DOMContentloaded
-window.addEventListener('DOMContentLoaded', () => {
+// AJAX = Assynchronious JavaScipt And Xml
+// Чтобы наша страница наш фронтend  умел общаться с сервером нам необходимы http запросы которые мы будем отпралять
+// Мы можем запрашивать данные постить данные и выполнять другие операции и чтобы все это происходило ассинхронно нам и нужна технология Ajax
 
-   // У нас есть три задачи
-   // первое это функция которая будет скрывать ненужные нам табы
-   // Показать нужный таб
-   // назначить обработчики событий на меню
+// Сейчас она реализуется несколькими способами
 
+// Разбираем самый первый вариант AJAX который реализуется при помощи XMLHTTPREAUEST на данный момент он не актуален но в проектах можно его встретить так что нужно уметь с ним работать и быть к этому готовым 
 
-   // Tabs
-   const tabs = document.querySelectorAll('.tabheader__item'),
-      tabsContent = document.querySelectorAll('.tabcontent'),
-      tabsParent = document.querySelector('.tabheader__items');
-
-   function hideTabContent() {
-      tabsContent.forEach(item => {
-         item.classList.add('hide');
-         item.classList.remove('show', 'fade');
-      });
-
-      tabs.forEach(item => {
-         item.classList.remove('tabheader__item_active');
-      });
-   }
-
-   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
-   function showTabContent(i = 0) {
-      tabsContent[i].classList.add('show', 'fade');
-      tabsContent[i].classList.remove('hide');
-      tabs[i].classList.add('tabheader__item_active');
-   }
+const inputRub = document.querySelector('#rub'),
+   inputUsd = document.querySelector('#usd');
 
 
-   hideTabContent();
-   showTabContent();
+// Обработчик события change у нас возникает когда наш input уходит из фокуса
+// Событие input происходит каждый раз  когда что то вводится или удаляется в input
+inputRub.addEventListener('input', () => {
+   // Используем встроенный  объект в браузере XMLHttpRequest()
+   // Это конструктор который создает новый объект
+   // Это  Шаблонизация в примерах мы можем создавать сколько угодно запросов и каждый раз они будут вести себя по разному и реализоваться в разных условиях
+   // Теперь когда мы создали экземпляр  такого класса  у него есть свои методы свои свойства и свои события
+   const request = new XMLHttpRequest();
 
-   tabsParent.addEventListener('click', (event) => {
-      const target = event.target;
+   // Метод open помогает собирать настройки которые помогут в будущем сделать запрос
+   // он принимает в себя несколько аргументов 
+   // 1 аргумент это  метод который используется для запроса get post
+   // 2 аргумент это путь к нашему серверу это может быть файлик это может быть что угодно но самое главное что мы прописываем url по которому будем делать запрос
+   // 3 аргумент отвечает у нас за ассинхронность по умолчанию там стоит true можно и поставить false
+   // 4 аргумент это логин // некоторые запросы мы можем делать только имея логин и пароль  точно также как мы авторизовывались на каких то сайтах и ресурсах
+   // 5 аргумент это пароль
+   //Записываются методы всегда в верхнем регистре
+   // Здесь стоит вспомнить как работает синхронный и ассинхронный код 
+   // Синхронный код это код который выполняется по порядку если какая то операция очень долго выполняется отсальной код ниже будем её ждать 
+   // Ассинхронный код работает обратным методом они аболютно не влияют на другой код они не кого не ждут не блокирует остальной код
+   // AJAX  запросы по умолчанию являются ассинхронным кодом тоесть мы послали запрос на сервер мы абсолютно не знаем сколько времени нам сервер будет отвечать и остальной код который идет после запроса он продолжит выполнятся  и потом уже когда сервер ответит наш код который был ассинхронный закончит свою работу
+   // Еcть два самых популярных http метода это get и post
+   //  get запрос  он направлен  на то чтобы получить какие то данные от сервера  например: получи код от сервера какой то курс валют, какие товары прямо сейчас у нас есть в интернет магазине
+   //  post запрос  он направлен  на то чтобы постить  какие то данные например: если хочю зарегестрироваться то я должен заполнить какие то регистрационные данные и когда нажму кнопочку потдвердить эту форму у меня отправится пост запрос потому что я что то пощю на сервер это происходит не только с текстовыми данными мы можем постить изображения или даже какие то файлы как это происходит на клиенте В GOOGLE disk  
+   request.open('GET', 'js/current.json');
 
-      if (target && target.classList.contains('tabheader__item')) {
-         tabs.forEach((item, i) => {
-            if (target == item) {
-               hideTabContent();
-               showTabContent(i);
-            }
-         })
-      }
-   });
-
-   // Timer
-
-   const deadline = '2023-08.2';
-
-   // задачаа нашей функции это получить разницу между датами
-   function getTimeRemaining(endtime) {
-      let days, hours, minutes, seconds;
-      const t = Date.parse(endtime) - Date.parse(new Date());
-      if (t <= 0) {
-         days = 0;
-         hours = 0;
-         minutes = 0;
-         seconds = 0;
-      } else {
-         days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-            minutes = Math.floor((t / 1000 / 60) % 60),
-            seconds = Math.floor((t / 1000) % 60);
-      }
-
-      return {
-         'total': t,
-         'days': days,
-         'hours': hours,
-         'minutes': minutes,
-         'seconds': seconds,
-      };
-
-   }
-
-   function getZero(num) {
-      if (num >= 0 && num < 10) {
-         return `0${num}`;
-      } else {
-         return num;
-      }
-   }
+   // Когда мы отправляем запрос нам нужно сказать а что именно мы отправляем, делается это для того чтобы наши трансферные протоколы четко понимали что им прередают и кода они приходят к серверу чтобы сервер понимал что он принимает в себя для всего этого сушествуют http заголовки
+   //Используем заголовок который нужен  для передачи JSON файлов  setRequestHeader();
+   request.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+   // После того как все приготовления готовы  мы можем отправить запрос делается это с посошью метода send()
+   // Этот метод в запросах будет отличаться в зависимоти от того метода который мы сейчас используем
+   // когда мы отправляем GET запрос мы просто запрашиваем информацию это значит что мы по факту нечего не отправляем на сервер
+   request.send();
 
 
-   // Функция которая будет устонавливать timer на страничку
-   function setClock(selector, endtime) {
-      const timer = document.querySelector(selector),
-         days = timer.querySelector('#days'),
-         hours = timer.querySelector('#hours'),
-         minutes = timer.querySelector('#minutes'),
-         seconds = timer.querySelector('#seconds'),
-         timeInterval = setInterval(updateClock, 1000);
-
-
-
-      updateClock();
-
-      // Функция которая будет обновлять наш Timer Каждую секунду
-      function updateClock() {
-         const t = getTimeRemaining(endtime);
-
-         days.innerHTML = getZero(t.days);
-         hours.innerHTML = getZero(t.hours);
-         minutes.innerHTML = getZero(t.minutes);
-         seconds.innerHTML = getZero(t.seconds);
-
-         if (t.total <= 0) {
-            clearInterval(timeInterval);
-         }
-      }
-   }
-
-   setClock('.timer', deadline);
-
-   // Modal
-   const modalTrigger = document.querySelectorAll('[data-modal]'),
-      modal = document.querySelector('.modal'),
-      //modalContent = document.querySelector('.modal__content'),
-      modalCloseBtn = document.querySelector('[data-close]');
-
-
-   //Вариант Ивана Петреченко
-   function openModal() {
-      modal.classList.add('show');
-      modal.classList.remove('hide');
-      document.body.style.overflow = 'hidden';
-      clearInterval(modalTimerId);
-
-   }
-   modalTrigger.forEach(btn => {
-      btn.addEventListener('click', openModal);
-   });
-
-   function closeModal() {
-      modal.classList.add('hide');
-      modal.classList.remove('show');
-      document.body.style.overflow = '';
-   }
-
-   modalCloseBtn.addEventListener('click', closeModal);
-
-   modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-         closeModal();
-      }
-   });
-
-   document.addEventListener('keydown', (e) => {
-      if (e.code === 'Escape' && modal.classList.contains('show')) {
-         closeModal();
+   // Чаще всего мы с вами будем использовать событие load оно проше потому что оно сробавтывает один раз когда запрос готов
+   //но когда запрос готов это не значит что он завершен успешно
+   request.addEventListener('readystatechange', () => {
+      // readystatechange Это событие отслеживает статус готовности нашего запроса в текуший момент 
+      if (request.readyState === 4 && request.status === 200) {
+         console.log(request.response);
+         const data = JSON.parse(request.response);
+         inputUsd.value = (+inputRub.value / data.current.usd).toFixed(2);
+      } else { // Никогда не оставляйте пользователя в неведении всегда если что то пошло не так всегда оповещайте пользователя об ошибке а то он может ввести и ждать и подумает что у вас что то сломалось приложение или сайт не работает и он просто уйдет
+         inputUsd.value = 'Что-то пошло не так';
       }
    });
 
 
+   // Мы получим ответ от сервера и что то начнем уже с ним делать
 
-   const modalTimerId = setTimeout(openModal, 5000);
+   // status это свойство содержит и показывает статус нашего запроса это 404 not found когда файл не найден  0 200 и тд всех их можно посмотреть в википедии
+   // statusText 
+   // reponse - ответ ,здесь у нас лежит  ответ от сервера 
+   // readyState = проверяет текущее состояние нашего запроса все состояия у нас обозночаются либо цифрой либо словами
+   //readyState в этом объекте у нас будет обозночаться циферкой и мы здесь имеем пять разный вариантов
 
-   function showModalByScroll() {
-      if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
-         openModal();
-         window.removeEventListener('scroll', showModalByScroll);
-      }
-   }
+   // 0 UNSENT  объект был создан. Метод open() еще не вызывался
 
-   window.addEventListener('scroll', showModalByScroll);
+   // 1 OPPENED  Метод open() был вызван
 
-   //Используем классы для карточек
+   // 2 HEADER_RECEIVED  Метод open() был вызван  доступны заголовки(headers) и статус
 
-   class MenuCard {
-      constructor(src, alt, title, descr, price, parentSelector, ...classes) {
-         this.src = src;
-         this.alt = alt;
-         this.title = title;
-         this.descr = descr;
-         this.price = price;
-         this.classes = classes;
-         this.parent = document.querySelector(parentSelector);
-         this.transfer = 27;
-         this.changeToUAH();
-      }
+   // 3 LOADING Загрузка: responseText содержит частичные данные
 
-      changeToUAH() {
-         this.price = this.price * this.transfer;
-      }
-
-      render() {
-         const element = document.createElement('div');
-         if (this.classes.length === 0) {
-            this.element = 'menu__item'
-            element.classList.add(this.element);
-         } else {
-            this.classes.forEach(className => element.classList.add(className));
-         }
+   // 4 DONE Операция полностью завершена // Именно он нас будет интерисовать 
 
 
-         element.innerHTML = `
-               <img src=${this.src} alt=${this.alt}>
-               <h3 class="menu__item-subtitle">${this.title}</h3>
-               <div class="menu__item-descr">${this.descr}</div>
-               <div class="menu__item-divider"></div>
-               <div class="menu__item-price">
-                  <div class="menu__item-cost">Цена:</div>
-                  <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-               </div>
-         `;
-         this.parent.append(element);
-      }
-   }
-   // Для того чтобы использовать метод и объект на месте мы просто прописываем new MenuCard без присваивание к какойто переменнной
-   //   Мы создаем здесь объект сразу же на нем  вызываем метод render он что то сделает что то нам отработает со страницей и он исчезнет потому что больше на него не будет ссылок мы нигде не сохраняем этот объект, это удобно когда нам только один раз нужно его использовать
-   new MenuCard(
-      "img/tabs/vegy.jpg",
-      "vegy",
-      'Меню "Фитнес"',
-      'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-      9,
-      '.menu .container',
-   ).render();
-
-
-   new MenuCard(
-      "img/tabs/elite.jpg",
-      "elite",
-      'Меню “Премиум”',
-      'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-      14,
-      '.menu .container'
-
-   ).render();
-
-   new MenuCard(
-      "img/tabs/post.jpg",
-      "post",
-      'Меню "Постное"',
-      'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие    продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество  белков за счет тофу и импортных вегетарианских стейков.',
-      21,
-      '.menu .container'
-   ).render();
 });
-
