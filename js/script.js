@@ -1,388 +1,96 @@
 "use strict"
 
-//Используем классы в реальной работе 
+//Promise(ES6) - Обещания 
 
-// В программировании много путей решения задач и чаще всего выбирают между более понятным и более простым в работе или по параметру скорости 
+//Без этой технологии сейчас frontend трудно представить и она позволяет нам довольно успешно работать с различными ассинхронными операциями 
+// Ассинхронный код бывает у нас например: в таймаутах когда мы запускаем что какая то функция выполнится через определенный промежуток времени либо будет повторятся через определенный промежуток либо при запросах на сервер когда мы точно не знаем через сколько ответит нам сервер и у нас операция идет ассинхронно 
 
+// мы говорим если произошло что то то мы обещаем что у нас выполнится следующее действие 
+//Здесь есть четкая цеочка действий которая зависит от предыдущих результатов Мы можем выполнить следующее действие только если предыдущий вариант наших действий был  успешно выполнен
 
-//Добавляем табы 
+console.log('Запрос данных...');
 
-// Назначение глобального обработчика событий DOMContentloaded
-window.addEventListener('DOMContentLoaded', () => {
+//!НЕВЕРОЯТНО ВАЖНАЯ ТЕМА В JavaScript
+// Создание promise
 
-   // У нас есть три задачи
-   // первое это функция которая будет скрывать ненужные нам табы
-   // Показать нужный таб
-   // назначить обработчики событий на меню
+// Обычно когда мы создаем промисы эта callback функция принимает у нас два аргумента это resolve, reject
 
+// Создаем обещание которое помещаем во внутрь переменной req
+// Когда мы создаем обещание promise мы предпологаем  что оно может завершиться как положительно так и отрицательно  но в данный момент мы не знаем как оно завершится  у нас есть определенный промежуток времени до того как мы получим результат тоже самое как это происходит у нас с сервером мы посылаем запрос на сервер и ждем ответа  от него мы не знаем как нам ответит сервер положительно или отрицательно 
+//внутри этого Промиса есть два атрибута resolve и reject по факту это аргументы вместо которых будут подставлятся функции если у нас все пошло правильно все хорошо отработало сервер нам ответил то мы будем вызывать функцию resolve
+//Если вдруг что то пошло не так вызываем reject 
+const req = new Promise((resolve, reject) => {//здесь когда мы используем промисы у нас эти два аргумента обозночают функции которые мы в будущем можем сами передавать 
+   // resolve значит что что то выполнилось правильно обещание выполнилось
+   // reject обещание не выполнилось и у нас что то пошло не так
 
-   // Tabs
-   const tabs = document.querySelectorAll('.tabheader__item'),
-      tabsContent = document.querySelectorAll('.tabcontent'),
-      tabsParent = document.querySelector('.tabheader__items');
-
-   function hideTabContent() {
-      tabsContent.forEach(item => {
-         item.classList.add('hide');
-         item.classList.remove('show', 'fade');
-      });
-
-      tabs.forEach(item => {
-         item.classList.remove('tabheader__item_active');
-      });
-   }
-
-   //Если функция вызывается без аргумента  то по уолчанию отработает то что присвоили  i 
-   function showTabContent(i = 0) {
-      tabsContent[i].classList.add('show', 'fade');
-      tabsContent[i].classList.remove('hide');
-      tabs[i].classList.add('tabheader__item_active');
-   }
-
-
-   hideTabContent();
-   showTabContent();
-
-   tabsParent.addEventListener('click', (event) => {
-      const target = event.target;
-
-      if (target && target.classList.contains('tabheader__item')) {
-         tabs.forEach((item, i) => {
-            if (target == item) {
-               hideTabContent();
-               showTabContent(i);
-            }
-         })
-      }
-   });
-
-   // Timer
-
-   const deadline = '2023-08.2';
-
-   // задачаа нашей функции это получить разницу между датами
-   function getTimeRemaining(endtime) {
-      let days, hours, minutes, seconds;
-      const t = Date.parse(endtime) - Date.parse(new Date());
-      if (t <= 0) {
-         days = 0;
-         hours = 0;
-         minutes = 0;
-         seconds = 0;
-      } else {
-         days = Math.floor(t / (1000 * 60 * 60 * 24)),
-            hours = Math.floor((t / (1000 * 60 * 60) % 24)),
-            minutes = Math.floor((t / 1000 / 60) % 60),
-            seconds = Math.floor((t / 1000) % 60);
-      }
-
-      return {
-         'total': t,
-         'days': days,
-         'hours': hours,
-         'minutes': minutes,
-         'seconds': seconds,
+   // Здесь у нас идет имитация ассинхронного кода допустим мы сделали запрос на наш сервер 
+   setTimeout(() => { // запускаем setTimeOut()
+      console.log('Подготовка данных'); //говорим чтобы сервер нам вернул вот такое сообщение
+      const product = {// и такие данные
+         name: 'TV',
+         price: 2000
       };
+      // И  эти данные получаем значит все в порядке и значит мы должны вызвать функцию resolve которая у нас говорит что все ок наше обещание выполнилось в положительную сторону  и это все произойдет у нас через две секунды 
 
-   }
+      // Дальше  когда мы начинаем использовать эти промисы мы должны обработать все эти варианты как  resolve так и reject 
 
-   function getZero(num) {
-      if (num >= 0 && num < 10) {
-         return `0${num}`;
-      } else {
-         return num;
-      }
-   }
-
-
-   // Функция которая будет устонавливать timer на страничку
-   function setClock(selector, endtime) {
-      const timer = document.querySelector(selector),
-         days = timer.querySelector('#days'),
-         hours = timer.querySelector('#hours'),
-         minutes = timer.querySelector('#minutes'),
-         seconds = timer.querySelector('#seconds'),
-         timeInterval = setInterval(updateClock, 1000);
-
-
-
-      updateClock();
-
-      // Функция которая будет обновлять наш Timer Каждую секунду
-      function updateClock() {
-         const t = getTimeRemaining(endtime);
-
-         days.innerHTML = getZero(t.days);
-         hours.innerHTML = getZero(t.hours);
-         minutes.innerHTML = getZero(t.minutes);
-         seconds.innerHTML = getZero(t.seconds);
-
-         if (t.total <= 0) {
-            clearInterval(timeInterval);
-         }
-      }
-   }
-
-   setClock('.timer', deadline);
-
-   // Modal
-   const modalTrigger = document.querySelectorAll('[data-modal]'),
-      modal = document.querySelector('.modal');
-   //modalContent = document.querySelector('.modal__content'),
-
-
-   //Вариант Ивана Петреченко
-   function openModal() {
-      modal.classList.add('show');
-      modal.classList.remove('hide');
-      document.body.style.overflow = 'hidden';
-      clearInterval(modalTimerId);
-
-   }
-   modalTrigger.forEach(btn => {
-      btn.addEventListener('click', openModal);
-   });
-
-   function closeModal() {
-      modal.classList.add('hide');
-      modal.classList.remove('show');
-      document.body.style.overflow = '';
-   }
-
-
-
-   modal.addEventListener('click', (e) => {
-      if (e.target === modal || e.target.getAttribute('data-close') == '') {
-         closeModal();
-      }
-   });
-
-   document.addEventListener('keydown', (e) => {
-      if (e.code === 'Escape' && modal.classList.contains('show')) {
-         closeModal();
-      }
-   });
-
-
-
-   const modalTimerId = setTimeout(openModal, 50000);
-
-   function showModalByScroll() {
-      if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
-         openModal();
-         window.removeEventListener('scroll', showModalByScroll);
-      }
-   }
-
-   window.addEventListener('scroll', showModalByScroll);
-
-   //Используем классы для карточек
-
-   class MenuCard {
-      constructor(src, alt, title, descr, price, parentSelector) {
-         this.src = src;
-         this.alt = alt;
-         this.title = title;
-         this.descr = descr;
-         this.price = price;
-         this.parent = document.querySelector(parentSelector);
-         this.transfer = 27;
-         this.changeToUAH();
-      }
-
-      changeToUAH() {
-         this.price = this.price * this.transfer;
-      }
-
-      render() {
-         const element = document.createElement('div');
-         element.innerHTML = `
-         <div class="menu__item">
-               <img src=${this.src} alt=${this.alt}>
-               <h3 class="menu__item-subtitle">${this.title}</h3>
-               <div class="menu__item-descr">${this.descr}</div>
-               <div class="menu__item-divider"></div>
-               <div class="menu__item-price">
-                  <div class="menu__item-cost">Цена:</div>
-                  <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
-               </div>
-            </div>
-         `;
-         this.parent.append(element);
-      }
-   }
-   // Для того чтобы использовать метод и объект на месте мы просто прописываем new MenuCard без присваивание к какойто переменнной
-   //   Мы создаем здесь объект сразу же на нем  вызываем метод render он что то сделает что то нам отработает со страницей и он исчезнет потому что больше на него не будет ссылок мы нигде не сохраняем этот объект, это удобно когда нам только один раз нужно его использовать
-   new MenuCard(
-      "img/tabs/vegy.jpg",
-      "vegy",
-      'Меню "Фитнес"',
-      'Меню "Фитнес" - это новый подход к приготовлению блюд: больше свежих овощей и фруктов. Продукт активных и здоровых людей. Это абсолютно новый продукт с оптимальной ценой и высоким качеством!',
-      9,
-      '.menu .container'
-   ).render();
-
-
-   new MenuCard(
-      "img/tabs/elite.jpg",
-      "elite",
-      'Меню “Премиум”',
-      'В меню “Премиум” мы используем не только красивый дизайн упаковки, но и качественное исполнение блюд. Красная рыба, морепродукты, фрукты - ресторанное меню без похода в ресторан!',
-      14,
-      '.menu .container'
-   ).render();
-
-   new MenuCard(
-      "img/tabs/post.jpg",
-      "post",
-      'Меню "Постное"',
-      'Меню “Постное” - это тщательный подбор ингредиентов: полное отсутствие    продуктов животного происхождения, молоко из миндаля, овса, кокоса или гречки, правильное количество  белков за счет тофу и импортных вегетарианских стейков.',
-      21,
-      '.menu .container'
-   ).render();
-
-   //Работаем на локальном сервере потому что мы используем пост запросы
-   // Задача это взять все формы обратной связи которые у нас есть в нашей верстке  которые есть в нашей верстке собрать данные из них и отправить на сервер
-
-   // Forms
-   // Реализация скрипта отправки данных на сервер
-
-
-   // Получаем все формы по тегу форм
-   const forms = document.querySelectorAll('form');
-   // Этот объект будет содержать список всех фраз которые я буду показывать в различных ситуациях 
-   const message = {
-      //Чтобы использовать изображение из проекта необходимо лишь использовать пути к этим картинкам
-      loading: 'img/form/spinner.svg',
-      success: 'Спасибо скоро мы с вами свяжемся',
-      failure: 'Что-то пошло не так...',
-   }
-
-   //! Важный момент когда работаем на локальном сервере скорее всего после изменений каких то сбрасывать кэш, делается это для того чтобы изменения применились на странице потому что сервер запоминает старые изменения  чтобы каждый раз не подгружать и это наз-ся кэшом чтобы сбросит кэш Shift f5  
-
-   //Самое главное это взять все наши формы и под кажду из них подвязать postData подвязать 
-
-   forms.forEach(item => {
-      //Сейчас на каждую форму будет подвязана функция postData который будет обработчиком события при отправке
-      postData(item);
-   });
-
-   // Функция которая будет отвечать за постинг даных
-   function postData(form) {// эта функция будет принимать в себя какую то форму 
-      // Используем аргумент форм потому что нам удобно бцдет навесить обработчик события
-      form.addEventListener('submit', (e) => { // и будем мы использовать событие submit оно срабатывает каждый раз когда мы пытаемся отправить какую то форму
-         //Чтобы отменить стандартное поведение браузера мы используем e.preventDefault
-         // Именно эта команда должна идти в самом начале чтобы не было проблем
-         e.preventDefault();
-
-         // Очень частый прием это создание нового блока на странице и туда мы выводим сообщение картинку не важно что самое главное что динамически будет появлятся какой то блок и чаще всего он добавляется к форме 
-
-         //создаем div
-         const statusMessage = document.createElement('img');
-
-         //Добавляем классы в div 
-         statusMessage.src = message.loading;
-         // Берем элемент и во внутрь помещаем то сообщение которое мы хотим показать 
-
-         // Как только мы отправляем запрос  как только у нас произошел submit у нас самое главное сообщение это загрузка мы скажем пользователю что произошла загрузка  если у него медленный интернет он увидет это сообщение
-         statusMessage.style.cssText = `
-            display:block;
-            margin: 0 auto;
-         `;
-         //Главное не забыть отправить наш statusMessage куда то на страницу ведь  пока что он сущ лишь в JavaScripte 
-         //form.append(statusMessage);
-
-         //Этот метод позволяет нам помещать наши элементы в разные места нашей верстки 
-         form.insertAdjacentElement('afterend', statusMessage)
-
-         //После этого Работаем с методом XMLHttpRequest() 
-         const request = new XMLHttpRequest();
-         // После этого  унас всегда вызывается метод open() чтобы настроить этот запрос
-         request.open('POST', 'server.php');
-         // Следующая самая главная самая важная задача сделать так чтобы все данные которые заполнил пользователь в форме мы получили в JavaScripte и уже могли отправить на сервер
-         // Самый простой способ подготовить такие данные сформы это использовать объект который наз-ся formData 
-         //нам не всегда нужно передавать в формате JSON
-         // Есть два формата первый это FormData второй это когда мы передаем JSON
-
-         // formData это специальный объект который позволяет с определенной формой быстро сформировать  все данные которые заполнил пользователь 
-         //во внутрь мы помещаем форму из которой нам нужно собрать данные
-
-         //!Очень важный момент на котором можно запнуться и потерять много часов времени это касается того как сверстаны формы и как прописаны input если мы предпологаем что данные должны идти на сервер то в вертске внутри input всегда нужен атрибут "name" и главное чтобы знаения name они не повторялись и наче formData не сможет найти этот input не сможеть  взять из него данные value чтобы сформировать из него правтльный ответ
-         //! Всегда проверяйте name  у ваших form
-
-         //Настраиваем заголовки которые должны будут говорить серверу что именно приходит 
-         // Чтобы правильно работать с FormData  во втром аргументе нам нужно указать multipart/form-data
-         //!Когда мы используем  свзяку XMLHttpRequest + form-data нам заголовок устанавливать не нужно  он утстанваливается автомотически  именно иза этой проблемы на сервере мы не получим данные
-         //request.setRequestHeader('Content-type', 'multipart/form-data');
-
-         //С каким форматом  мы будем общаться  JSON или form-data  зависит от бэкенда  
-         request.setRequestHeader('Content-type', 'application/json');
-
-         //Задача у нас есть объект FormData которую на необходимо превратить в формат JSON
-         const formData = new FormData(form);
-
-         //FormData это довольно специфический объект и мы просто так его не можем прогнать в другой формат 
-         // Для этого нам понадобиться прием который частенько используется
-
-         //Создаем новый объект 
-         const object = {};
-         //теперь переберем все что есть внутри formData и мы все эти данные пометим в object
-         formData.forEach(function (value, key) {
-            //Обращаемся к нашему пустому объекту 
-            // На основании тех данных которые были в formdata мы сформируем object с помошью обычного перебора
-            object[key] = value;
-         });
-         // Теперь когда мы получили обычный объект а не FormData() мы на нем уже можем использовать конвертацию в JSON 
-         //для этого создаем промежуточную переменнную используем JSON.stringify(внутрь помещаем object)которая превращает обычный объект в JSON  
-         //теперь все что надо сделать это взять JSON и поместить его в request.send(dvctnj formData json)
-         const json = JSON.stringify(object);
-
-         // Отправляем данные используем метод send()
-         request.send(json);//здесь уже есть body потому что мы что то отправляем
-
-         // Когда данные уйдут на сервер нам с ними нужно будет что то сделать
-         // Отслеживаем конечную загрузку запроса
-         request.addEventListener('load', () => {
-            // Если все правильно произошло 
-            if (request.status === 200) {
-               //эта команда чтобы четко увидеть что все правильно произошло
-               console.log(request.response);
-               //Когда все успешно пришло выводим success тоесть у нас загрузка поменяется на success
-               showThanksModal(message.success);
-               //Очищаем нашу форму после успешной отправки 
-               form.reset();
-               statusMessage.remove();
-            } else {
-               showThanksModal(message.failure);
-            }
-         });
-      });
-   }
-   // Красивое оповещение пользователя
-   // функция которая тоже относиться к отправке формы
-   function showThanksModal(message) {
-      const prevModalDialog = document.querySelector('.modal__dialog');
-
-      prevModalDialog.classList.add('hide');
-      openModal();
-
-      const thanksModal = document.createElement('div');
-
-      thanksModal.classList.add('modal__dialog');
-      thanksModal.innerHTML = `
-         <div class="modal__content">
-               <div class="modal__close" data-close>×</div>
-               <div class="modal__title">${message}</div>
-         </div>
-      `;
-
-      document.querySelector('.modal').append(thanksModal);
-      setTimeout(() => {
-         thanksModal.remove();
-         prevModalDialog.classList.add('show');
-         prevModalDialog.classList.remove('hide');
-         closeModal();
-      }, 4000);
-   }
+      //ему передаем данные которые будут идти дальше
+      resolve(product);
+   }, 2000)
 });
+// Для того чтобы обрабатывать положительный результат  унас есть метод который наз-ся then() он внутри себя принимает тот аргумент с функцией который называется resolve
+// then() этот метод который выполняется на промисе в случаи положительного исхода 
+// Функция resolve эта нижняя  будет принимать в качестве аргумента  product который нам вернулся из предыдущего этапа
+req.then((product) => {
+   return new Promise((resolve, reject) => {
+      setTimeout(() => {
+         product.status = 'order';
+         resolve(product);
+      }, 2000);
+   });
+}).then(data => {
+   data.modify = true;
+   return data;
+}).then(data => {
+   console.log(data);
+}).catch(() => {// Это действие выполнится при какой то ошибке если сверху что то пойдет не так
+   console.error('Произошла ошибка')
+}).finally(() => {
+   console.log('Finally ')
+});
+// Эту часть мы можем заменить функцией resolve
+// У Promise есть огромное преимущество перед callbackами мы можем возвращать promise и then по цепочке когда одна асинхронная оперция выполнится мы выполним следующую и тому подобное  
+// Reject мы можем получить когда ссылаемся на не существующий сервер не сущ файл или сервер упал и все эти операци  мы можем обработать при помощи reject  
+// Чтобы обработать ошибку у нас есть специальный блок кода который наз-ся cathc обычно catch ставиться в конце привыкайте к этому 
+
+//Блок кода finally является важной частью promise и он используется всегда в конце после всех взаимодействий и обработок ошибок  он позволяет выполнить нам действия в абсолютно любом исходе promisa тоесть это действия которые должны быть воспроизведены абсолютно всегда 
+
+
+
+
+// Такие функции можно использовать чтобы запускать одинаковые операци через определенный промежуток времени 
+const test = time => {
+   return new Promise(resolve => {
+      setTimeout(() => resolve(), time);
+   });
+};
+
+//test(1000).then(() => console.log('1000 ms'));
+//test(1000).then(() => console.log('2000 ms'));
+
+// Команда Promise.all служит для того чтобы мы точно убедились в том что все наши promise уже выполнились 
+// Если говорить о практике  то мы можем например делать несколько заросов на разные сервера чтобы получить определенные изображения  и эти сервера по разному отвечают нам с разным промежутком времени но при всем этом мы хотим чтобы на сайте у нас использовались все 3 или 4 изображения сразу как только они все загрузятся тоесть мы должны подождать загрузки всех наших промисов  и только потом что то делать как раз Promise.all этим и занимается
+
+//Promise.all ждет окончания всех promisoв которые были переданы сюда в массив и только потом  он что то будет выполнять и для того чтобы что то выполнить мы можем использовать  then если положительно все прошло  либо catch написать что какой то из промисов у нас не выполнился и какой то внутри сломался 
+//Promise all ждет выполнения всех promise и толко тогда что то делал 
+Promise.all([test(1000), test(2000)]).then(() => {
+   console.log('all');
+});
+
+// Promise.race() выполняет свои дейсвия только когда самый первый promise у нас правильно  отработал
+Promise.race([test(1000), test(2000)]).then(() => {
+   console.log('all');
+});
+
+// Второй метод называется race и переводится как гонка  и он делает почти обратную ситуацию
 
