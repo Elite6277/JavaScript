@@ -127,9 +127,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
    // Modal
    const modalTrigger = document.querySelectorAll('[data-modal]'),
-      modal = document.querySelector('.modal'),
-      //modalContent = document.querySelector('.modal__content'),
-      modalCloseBtn = document.querySelector('[data-close]');
+      modal = document.querySelector('.modal');
+   //modalContent = document.querySelector('.modal__content'),
 
 
    //Вариант Ивана Петреченко
@@ -150,10 +149,10 @@ window.addEventListener('DOMContentLoaded', () => {
       document.body.style.overflow = '';
    }
 
-   modalCloseBtn.addEventListener('click', closeModal);
+
 
    modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
+      if (e.target === modal || e.target.getAttribute('data-close') == '') {
          closeModal();
       }
    });
@@ -166,7 +165,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 
-   const modalTimerId = setTimeout(openModal, 5000);
+   const modalTimerId = setTimeout(openModal, 50000);
 
    function showModalByScroll() {
       if (window.pageYOffset + document.documentElement.clientHeight >= document.documentElement.scrollHeight - 1) {
@@ -246,12 +245,15 @@ window.addEventListener('DOMContentLoaded', () => {
    // Задача это взять все формы обратной связи которые у нас есть в нашей верстке  которые есть в нашей верстке собрать данные из них и отправить на сервер
 
    // Forms
+   // Реализация скрипта отправки данных на сервер
+
 
    // Получаем все формы по тегу форм
    const forms = document.querySelectorAll('form');
    // Этот объект будет содержать список всех фраз которые я буду показывать в различных ситуациях 
    const message = {
-      loading: 'Загрузка',
+      //Чтобы использовать изображение из проекта необходимо лишь использовать пути к этим картинкам
+      loading: 'img/form/spinner.svg',
       success: 'Спасибо скоро мы с вами свяжемся',
       failure: 'Что-то пошло не так...',
    }
@@ -276,16 +278,22 @@ window.addEventListener('DOMContentLoaded', () => {
          // Очень частый прием это создание нового блока на странице и туда мы выводим сообщение картинку не важно что самое главное что динамически будет появлятся какой то блок и чаще всего он добавляется к форме 
 
          //создаем div
-         const statusMessage = document.createElement('div');
+         const statusMessage = document.createElement('img');
 
          //Добавляем классы в div 
-         statusMessage.classList.add('status');
+         statusMessage.src = message.loading;
          // Берем элемент и во внутрь помещаем то сообщение которое мы хотим показать 
 
          // Как только мы отправляем запрос  как только у нас произошел submit у нас самое главное сообщение это загрузка мы скажем пользователю что произошла загрузка  если у него медленный интернет он увидет это сообщение
-         statusMessage.textContent = message.loading;
+         statusMessage.style.cssText = `
+            display:block;
+            margin: 0 auto;
+         `;
          //Главное не забыть отправить наш statusMessage куда то на страницу ведь  пока что он сущ лишь в JavaScripte 
-         form.append(statusMessage);
+         //form.append(statusMessage);
+
+         //Этот метод позволяет нам помещать наши элементы в разные места нашей верстки 
+         form.insertAdjacentElement('afterend', statusMessage)
 
          //После этого Работаем с методом XMLHttpRequest() 
          const request = new XMLHttpRequest();
@@ -340,17 +348,41 @@ window.addEventListener('DOMContentLoaded', () => {
                //эта команда чтобы четко увидеть что все правильно произошло
                console.log(request.response);
                //Когда все успешно пришло выводим success тоесть у нас загрузка поменяется на success
-               statusMessage.textContent = message.success;
+               showThanksModal(message.success);
                //Очищаем нашу форму после успешной отправки 
                form.reset();
-               setTimeout(() => {
-                  statusMessage.remove();
-               }, 2000)
+               statusMessage.remove();
             } else {
-               statusMessage.textContent = message.failure;
+               showThanksModal(message.failure);
             }
          });
       });
+   }
+   // Красивое оповещение пользователя
+   // функция которая тоже относиться к отправке формы
+   function showThanksModal(message) {
+      const prevModalDialog = document.querySelector('.modal__dialog');
+
+      prevModalDialog.classList.add('hide');
+      openModal();
+
+      const thanksModal = document.createElement('div');
+
+      thanksModal.classList.add('modal__dialog');
+      thanksModal.innerHTML = `
+         <div class="modal__content">
+               <div class="modal__close" data-close>×</div>
+               <div class="modal__title">${message}</div>
+         </div>
+      `;
+
+      document.querySelector('.modal').append(thanksModal);
+      setTimeout(() => {
+         thanksModal.remove();
+         prevModalDialog.classList.add('show');
+         prevModalDialog.classList.remove('hide');
+         closeModal();
+      }, 4000);
    }
 });
 
