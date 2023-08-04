@@ -60,7 +60,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
    // Timer
 
-   const deadline = '2023-08.2';
+   const deadline = '2023-08.24';
 
    // задачаа нашей функции это получить разницу между датами
    function getTimeRemaining(endtime) {
@@ -449,6 +449,7 @@ window.addEventListener('DOMContentLoaded', () => {
          prevModalDialog.classList.remove('hide');
          closeModal();
       }, 4000);
+
    }
    // Fetch API 
    // API Aplication Programming Interface тоесть интерфейс какого то программного обеспечения либо приложения
@@ -482,5 +483,66 @@ window.addEventListener('DOMContentLoaded', () => {
 
    // Итог сегодня мы познакомились с очень полезной и приятной фичой в JS оно наз-ся fetch оно появилось нетак давно и уже стала замен XMLHTTPRequest объекта при помощи которого мы раньше делали ajax  запросы
    //Самое главное что нужно понимать что fetch работает на промисах promise тоесть мы дальше можем делать цепочку вызовов которые являются по факту callbackaми  дальше по курсу мы еще не раз будем использовать promise  
+
+   // Slider
+
+   //Берем класс который определяет каждый отдельный слайд
+   const slides = document.querySelectorAll('.offer__slide'),
+      // Стрелочка prev 
+      prev = document.querySelector('.offer__slider-prev'),
+      next = document.querySelector('.offer__slider-next'),
+      total = document.querySelector('#total'),
+      current = document.querySelector('#current');
+
+
+   // Индекс которая будет определять текущее положение в слайдере 
+   let slideIndex = 1;
+
+
+   // Инициализируем слайдер чтобы ое изначально превратился в ту структуру которую мы должны увидеть 
+   // Для этого мы берем наш функциоанал show Slides  и во внутрь мы помещяем наше начальное значение  слайд индекса 
+   showSlides(slideIndex);
+
+   if (slides.length < 10) {
+      total.textContent = `0${slides.length}`;
+   } else {
+      total.textContent = slides.length;
+   }
+
+
+   // Написание функции по показу и скрытию наших слайдов
+   function showSlides(n) {
+      if (n > slides.length) {
+         slideIndex = 1;
+      }
+
+      if (n < 1) {
+         slideIndex = slides.length;
+      }
+
+      // Скрыть слайдеры на страничке сначала и показать только тот который нас интересует 
+      slides.forEach(item => item.style.display = 'none');
+
+      // Берем нужный слайд и показываем его 
+      slides[slideIndex - 1].style.display = 'block';
+
+      if (slides.length < 10) {
+         current.textContent = `0${slideIndex}`;
+      } else {
+         current.textContent = slideIndex;
+      }
+      //
+   }
+
+   function plusSlides(n) {
+      showSlides(slideIndex += n);
+   }
+
+   prev.addEventListener('click', () => {
+      plusSlides(-1);
+   });
+   next.addEventListener('click', () => {
+      plusSlides(1);
+   });
 });
 
