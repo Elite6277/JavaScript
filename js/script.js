@@ -691,3 +691,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 });
 
+
+
+localStorage.setItem('number', 5);
+// Здесь у нас один аргумент то что мы хотим с вами получить
+console.log(localStorage.getItem('number', 5));
+
+localStorage.removeItem('number')
+
