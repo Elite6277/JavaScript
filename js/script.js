@@ -484,65 +484,137 @@ window.addEventListener('DOMContentLoaded', () => {
    // Итог сегодня мы познакомились с очень полезной и приятной фичой в JS оно наз-ся fetch оно появилось нетак давно и уже стала замен XMLHTTPRequest объекта при помощи которого мы раньше делали ajax  запросы
    //Самое главное что нужно понимать что fetch работает на промисах promise тоесть мы дальше можем делать цепочку вызовов которые являются по факту callbackaми  дальше по курсу мы еще не раз будем использовать promise  
 
-   // Slider
+
+   // Slider simple variant
 
    //Берем класс который определяет каждый отдельный слайд
    const slides = document.querySelectorAll('.offer__slide'),
       // Стрелочка prev 
       prev = document.querySelector('.offer__slider-prev'),
+      // Стрелочка next 
       next = document.querySelector('.offer__slider-next'),
       total = document.querySelector('#total'),
-      current = document.querySelector('#current');
+      current = document.querySelector('#current'),
+      slidesWrapper = document.querySelector('.offer__slider-wrapper'),
+      slidesField = document.querySelector('.offer__slider-inner'),
+      width = window.getComputedStyle(slidesWrapper).width;
 
 
    // Индекс которая будет определять текущее положение в слайдере 
    let slideIndex = 1;
-
-
-   // Инициализируем слайдер чтобы ое изначально превратился в ту структуру которую мы должны увидеть 
-   // Для этого мы берем наш функциоанал show Slides  и во внутрь мы помещяем наше начальное значение  слайд индекса 
-   showSlides(slideIndex);
+   let offset = 0;
 
    if (slides.length < 10) {
       total.textContent = `0${slides.length}`;
+      current.textContent = `0${slideIndex}`;
    } else {
       total.textContent = slides.length;
+      current.textContent = slideIndex;
    }
 
+   // Устанавливаем этому блоку ширину 
+   slidesField.style.width = 100 * slides.length + '%';
+   slidesField.style.display = 'flex';
+   slidesField.style.transition = '0.5s all';
 
-   // Написание функции по показу и скрытию наших слайдов
-   function showSlides(n) {
-      if (n > slides.length) {
+   slidesWrapper.style.overflow = 'hidden';
+
+
+   slides.forEach(slide => {
+      slide.style.width = width;
+   });
+
+   // Обработчик события для того чтобы передвигать наш слайдер 
+   next.addEventListener('click', () => {
+      if (offset == +width.slice(0, width.length - 2) * (slides.length - 1)) { //'500px'
+         offset = 0;
+      } else {
+         offset += +width.slice(0, width.length - 2);
+      }
+      slidesField.style.transform = `translateX(-${offset}px)`;
+
+      if (slideIndex == slides.length) {
          slideIndex = 1;
+      } else {
+         slideIndex++
       }
-
-      if (n < 1) {
-         slideIndex = slides.length;
-      }
-
-      // Скрыть слайдеры на страничке сначала и показать только тот который нас интересует 
-      slides.forEach(item => item.style.display = 'none');
-
-      // Берем нужный слайд и показываем его 
-      slides[slideIndex - 1].style.display = 'block';
 
       if (slides.length < 10) {
          current.textContent = `0${slideIndex}`;
       } else {
          current.textContent = slideIndex;
       }
-      //
-   }
+   });
 
-   function plusSlides(n) {
-      showSlides(slideIndex += n);
-   }
-
+   //Обработчик события для того чтобы передвигать наш слайдер назад
    prev.addEventListener('click', () => {
-      plusSlides(-1);
+      if (offset == 0) { //'500px'
+         offset = +width.slice(0, width.length - 2) * (slides.length - 1)
+      } else {
+         offset -= +width.slice(0, width.length - 2);
+      }
+      slidesField.style.transform = `translateX(-${offset}px)`;
+
+      if (slideIndex == 1) {
+         slideIndex = slides.length;
+      } else {
+         slideIndex--;
+      }
+
+      if (slides.length < 10) {
+         current.textContent = `0${slideIndex}`;
+      } else {
+         current.textContent = slideIndex;
+      }
    });
-   next.addEventListener('click', () => {
-      plusSlides(1);
-   });
+
+   // Инициализируем слайдер чтобы ое изначально превратился в ту структуру которую мы должны увидеть 
+   // Для этого мы берем наш функциоанал show Slides  и во внутрь мы помещяем наше начальное значение  слайд индекса 
+   //showSlides(slideIndex);
+
+   //if (slides.length < 10) {
+   //total.textContent = `0${slides.length}`;
+   //} else {
+   //total.textContent = slides.length;
+   //}
+
+
+   // Написание функции по показу и скрытию наших слайдов
+   //function showSlides(n) {
+   //if (n > slides.length) {
+   //slideIndex = 1;
+   //}
+
+   //if (n < 1) {
+   //slideIndex = slides.length;
+   //}
+
+   // Скрыть слайдеры на страничке сначала и показать только тот который нас интересует 
+   //slides.forEach(item => item.style.display = 'none');
+
+   // Берем нужный слайд и показываем его 
+   //slides[slideIndex - 1].style.display = 'block';
+
+   //if (slides.length < 10) {
+   //current.textContent = `0${slideIndex}`;
+   //} else {
+   //current.textContent = slideIndex;
+   //}
+   //
+   //}
+
+   //function plusSlides(n) {
+   //showSlides(slideIndex += n);
+   //}
+
+   //prev.addEventListener('click', () => {
+   //plusSlides(-1);
+   //});
+   //next.addEventListener('click', () => {
+   //plusSlides(1);
+   //});
+
+   // slider 2 variant
+
 });
 
