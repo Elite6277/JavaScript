@@ -1,18 +1,18 @@
-function slider() {
+function slider({ container, slide, nextArrow, prevArrow, totalCounter, currentCounter, wrapper, field }) {
    // Slider simple variant
 
    //Берем класс который определяет каждый отдельный слайд
-   const slides = document.querySelectorAll('.offer__slide'),
+   const slides = document.querySelectorAll(slide),
       //Получаем слайдер 
-      slider = document.querySelector('.offer__slider'),
+      slider = document.querySelector(container),
       // Стрелочка prev 
-      prev = document.querySelector('.offer__slider-prev'),
+      prev = document.querySelector(prevArrow),
       // Стрелочка next 
-      next = document.querySelector('.offer__slider-next'),
-      total = document.querySelector('#total'),
-      current = document.querySelector('#current'),
-      slidesWrapper = document.querySelector('.offer__slider-wrapper'),
-      slidesField = document.querySelector('.offer__slider-inner'),
+      next = document.querySelector(nextArrow),
+      total = document.querySelector(totalCounter),
+      current = document.querySelector(currentCounter),
+      slidesWrapper = document.querySelector(wrapper),
+      slidesField = document.querySelector(field),
       width = window.getComputedStyle(slidesWrapper).width;
 
 
@@ -160,4 +160,4 @@ function slider() {
    });
 }
 
-module.exports = slider;
+export default slider;

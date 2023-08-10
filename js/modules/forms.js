@@ -1,10 +1,12 @@
-function forms() {
+import { closeModal, openModal } from "./modal";
+import { postData } from "../services/services";
+function forms(formSelector, modalTimerId) {
    // Forms
    // Реализация скрипта отправки данных на сервер
 
 
    // Получаем все формы по тегу форм
-   const forms = document.querySelectorAll('form');
+   const forms = document.querySelectorAll(formSelector);
    // Этот объект будет содержать список всех фраз которые я буду показывать в различных ситуациях 
    const message = {
       //Чтобы использовать изображение из проекта необходимо лишь использовать пути к этим картинкам
@@ -22,29 +24,6 @@ function forms() {
       bindPostData(item);
    });
 
-   //Самое главное это взять все наши формы и под кажду из них подвязать postData подвязать 
-
-   //Сейчас на каждую форму будет подвязана функция postData который будет обработчиком события при отправке
-   //Cоздаем функцию function Expression 
-
-   // Наша функция postData занимается тем что она настраивает наш запрос она fetchit тоесть посылает наш запрос на сервер получает какой то ответ от сервера что например запостили успешно и после этого транформирует этот ответ в Json
-   const postData = async (url, data) => {
-      // создаем переменнную result  во внутрь нее мы  с вами будем помешать промис который возврашается от fetch 
-      //когда мы делаем запрос мы сразу можем обработать те данные которые пришли 
-
-      //она fetchit
-      const res = await fetch(url, {// это асинхронный код и он не ждет другой код  и Нам нужен механизм который превращяет ассинхронный код в синхронный для решения этой проблемы  появились такие операторы как Assync Await  
-         //await значит что неоьходимо дождаться результата этого запроса какой результат нас не волнует самое главное что мы должны его дождаться и толкьо после того как у нас будет результат await пропустит нас дальше 
-         method: 'POST', //каким образом  
-         headers: {
-            'Content-type': 'application/json'
-         },
-         // и что имеено
-         body: data
-      });
-      //транформирует этот ответ в Json
-      return await res.json(); // Пишем здесь return чтобы могли дальше по цепочке обработать и тут  мы должны дождатся результата этого промиса прежде чем его returnit
-   }
 
    // Функция которая будет отвечать за постинг даных
    function bindPostData(form) {// эта функция будет принимать в себя какую то форму 
@@ -152,7 +131,7 @@ function forms() {
       const prevModalDialog = document.querySelector('.modal__dialog');
 
       prevModalDialog.classList.add('hide');
-      openModal();
+      openModal('.modal', modalTimerId);
 
       const thanksModal = document.createElement('div');
 
@@ -169,10 +148,10 @@ function forms() {
          thanksModal.remove();
          prevModalDialog.classList.add('show');
          prevModalDialog.classList.remove('hide');
-         closeModal();
+         closeModal('.modal');
       }, 4000);
 
    }
 }
 
-module.exports = forms;
+export default forms;
