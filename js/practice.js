@@ -1,21 +1,23 @@
 'use strict';
 
-// JS анимации, requestAnimationFrame
+// Web Animations API
 
-// Их существует два вида первый способ мы с вами разбирали когда изучали временые функции setInterval и SetTimeout 
+// Для создания анимации нам понадобится специальный коснтруктор Animation()
+// На данный момент его можно создать двумя способами чуть более сложный это через коснтруктор  тоесть когда мы прописываем new Animation() и передаем туда аргументы
 
-// Для создания более сложных анимаций сущ requestanimationframe 
-//RequestAnimationFrame позволяет нам запускать какие то функции в качестве анимаций  эта функция запускается так что она берет вашу анимацию и подстравивает ее под частоту обновления вашего браузера  таким образом ваша анимация будет просиходить  в тот момент когда у вас идет обновление странички и соотвественно вы точно также будете плавно видетть анимацию но при этом нагрузка на ваш браузер очпень сильно снижается
-let pos = 0;
+// Второй вариант это использовать метод animate() интерфейса Element это быстрый способ создания Animation
 
-function myAnimation() {
-   pos++;
-   elem.style.top = pos + 'px';
-   elem.style.left = pos + 'px';
+const descr = document.querySelectorAll('.tabcontent__descr');
 
-   if (pos < 300) {
-      requestAnimationFrame(myAnimation);
-   }
-}
+const phoneAnimation = descr.forEach(item => {
 
-btn.addEventListener('click', myAnimation);
+   item.animate([
+      { transform: 'translateY(0)' },
+      { transform: 'translateY(100px)' },
+      { transform: 'translateY(-100px)' },
+      { transform: 'translateY(0)' }
+   ], {
+      duration: 3000,
+      iterations: Infinity
+   });
+})
